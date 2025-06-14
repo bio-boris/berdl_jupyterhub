@@ -18,6 +18,42 @@ This document outlines key considerations and design decisions for the BERDL Cus
 * **Persistence:** It **must be stable and persistent** across JupyterHub restarts and deployments, especially if `c.Authenticator.enable_auth_state` is set to `True`. If this key changes, any `auth_state` encrypted with the previous key becomes unreadable. This can break features relying on stored authentication data and may force users to re-authenticate.
 * **Recommendation:** Similar to the cookie secret, generate a strong, random key once and store it securely as a Kubernetes `Secret`. Inject this secret as an environment variable named `JUPYTERHUB_CRYPT_KEY` into your JupyterHub Deployment pod.
 
+### Other Secrets to Generate
+
+Beyond the `JUPYTERHUB_COOKIE_SECRET` and `JUPYTERHUB_CRYPT_KEY`, several other sensitive pieces of information should be managed as secrets in a production JupyterHub deployment, especially with custom spawners and external integrations.
+
+1.  **JupyterHub Internal API Token (`JUPYTERHUB_API_TOKEN`)**
+    * **Purpose:** This critical internal token is used by the JupyterHub application to authenticate its requests to the proxy (e.g., `configurable-http-proxy`). It ensures only authorized components can add/remove routes for user servers.
+    * **Recommendation:** Generate a strong random token. Store it in a Kubernetes `Secret` and inject it as an environment variable into your JupyterHub Deployment pod.
+
+2.  **Authenticator-Specific Secrets**
+    * **Purpose:** If your JupyterHub authenticator connects to an external identity provider (like OAuth, LDAP, etc.), that provider will issue credentials for your application.
+    * **Examples:**
+        * **OAuth (e.g., Google, GitHub, Okta, Azure AD):** You'll need a `client_secret` issued by the OAuth provider.
+        * **LDAP/Active Directory:** If your `LDAPAuthenticator` performs a "bind" operation, you'll need the corresponding bind DN password.
+    * **Recommendation:** Obtain these from your identity provider. Store them in Kubernetes `Secrets` and inject them as environment variables (e.g., `OAUTH_CLIENT_SECRET`, `LDAP_BIND_PASSWORD`) into the Hub pod.
+
+3.  **External Service Credentials (from your `CustomKubeSpawner` context)**
+    * **Purpose:** Your `CustomKubeSpawner` directly interacts with other services (like Spark and MinIO), which require credentials for authentication and authorization.
+    * **Examples:**
+        * **MinIO:** Your code uses `MINIO_ACCESS_KEY` and `MINIO_SECRET_KEY`. These are highly sensitive credentials for accessing your object storage.
+        * **Spark:** If your Spark cluster requires authentication for job submission or API interaction, those credentials would need to be managed.
+        * **KBASE_AUTH_TOKEN:** Your Spawner sets this environment variable. If it's a sensitive token granting access to KBase resources, it should be treated as a secret.
+    * **Recommendation:** Generate strong, dedicated credentials for these services. Store them in Kubernetes `Secrets` and inject them as environment variables into the Hub pod (for the Spawner's use) and, if user code directly accesses them, potentially into the user pods as well.
+
+4.  **Any Other Application-Specific API Keys / Credentials**
+    * If your JupyterHub deployment integrates with other third-party services (e.g., logging, monitoring, custom APIs), these often require their own API keys or tokens.
+    * **Recommendation:** Treat all such keys and credentials as secrets.
+
+
+
+
+
+
+
+JUPYTERHUB_API_TOKEN
+
+
 ### Database Persistence
 
 * **Consequences of Wiping DB:** If the JupyterHub database is reset or deleted with every restart or deployment, you will **lose all persistent state** vital for JupyterHub's operation. This includes:
