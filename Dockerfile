@@ -4,8 +4,8 @@ ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
-COPY jupyterhub_customizations/kb_jupyterhub_auth.py /srv/jupyterhub/service/
-COPY jupyterhub_customizations/custom_kubespawner.py /srv/jupyterhub/service/
+COPY jupyterhub_customizations/* /srv/jupyterhub/service/
+
 
 ENTRYPOINT ["/tini", "--"]
-CMD ["jupyterhub", "-f", "/etc/jupyterhub/jupyterhub_config.py"]
+CMD ["jupyterhub", "-f", "/srv/jupyterhub/service/jupyterhub_config.py"]
