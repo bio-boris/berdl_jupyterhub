@@ -1,11 +1,11 @@
 FROM jupyterhub/jupyterhub:5.3.0
 
-ENV TINI_VERSION v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-RUN chmod +x /tini
+COPY jupyterhub_customizations/ /opt/jupyterhub_customizations/
+COPY auth/ /opt/auth/
 
-COPY jupyterhub_customizations/kb_jupyterhub_auth.py /srv/jupyterhub/service/
-COPY jupyterhub_customizations/custom_kubespawner.py /srv/jupyterhub/service/
+ENV PYTHONPATH=/opt:$PYTHONPATH
 
-ENTRYPOINT ["/tini", "--"]
-CMD ["jupyterhub", "-f", "/etc/jupyterhub/jupyterhub_config.py"]
+COPY jupyterhub_customizations/jupyterhub_config.py /etc/jupyterhub/jupyterhub_config.py
+
+ENTRYPOINT ["jupyterhub"]
+CMD ["-f", "/etc/jupyterhub/jupyterhub_config.py"]
