@@ -4,6 +4,8 @@ import os
 c = get_config()
 
 # Authenticator
+
+
 c.JupyterHub.authenticator_class = KBaseAuthenticator
 c.Authenticator.enable_auth_state = True
 # ref: https://jupyterhub.readthedocs.io/en/latest/reference/api/auth.html#jupyterhub.auth.Authenticator.allow_all
