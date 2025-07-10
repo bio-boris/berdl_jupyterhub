@@ -72,10 +72,23 @@ class KBaseAuthenticator(Authenticator):
         """
         Pass KBase authentication token to spawner environment
         """
+        # auth_state = await user.get_auth_state() or {}
+        # kbase_auth_token = auth_state.get("kbase_token")
+        #
+        # if not kbase_auth_token:
+        #     raise MissingTokenError("Missing KBase authentication token in auth state")
+        #
+        # spawner.environment["KBASE_AUTH_TOKEN"] = kbase_auth_token
+        #
+        #
+        #
+        # Inside KBaseAuthenticator.pre_spawn_start
+        # ... (previous code)
+
         auth_state = await user.get_auth_state() or {}
+        logger.info(f"Inside pre_spawn_start for user {user.name}. Auth state retrieved: {auth_state}")
         kbase_auth_token = auth_state.get("kbase_token")
 
         if not kbase_auth_token:
+            logger.error(f"Missing KBase authentication token in auth state for user {user.name}. Auth state was: {auth_state}")
             raise MissingTokenError("Missing KBase authentication token in auth state")
-
-        spawner.environment["KBASE_AUTH_TOKEN"] = kbase_auth_token
