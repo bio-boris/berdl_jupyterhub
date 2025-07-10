@@ -29,7 +29,7 @@ c.JupyterHub.cookie_secret = bytes.fromhex(os.environ['JUPYTERHUB_COOKIE_SECRET_
 c.JupyterHub.spawner_class = 'kubespawner.KubeSpawner'
 
 # Hub
-c.KubeSpawner.hub_connect_url = 'http://jupyterhub:8081/hub/api'
+c.KubeSpawner.hub_connect_url = 'http://jupyterhub:8081'
 
 
 # shutdown the server after no activity for an hour
