@@ -1,2 +1,2 @@
 aiohttp==3.12.13
-jupyterhub-kubespawner==7.0.0
+jupyterhub-kubespawner==7   .0.0

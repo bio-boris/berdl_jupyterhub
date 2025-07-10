@@ -15,8 +15,7 @@ c.JupyterHub.template_paths = [os.environ['JUPYTERHUB_TEMPLATES_DIR']]
 c.JupyterHub.template_vars = {
     'kbase_origin': os.environ['KBASE_ORIGIN'],
 }
-# Requires JUPYTERHUB_CRYPT_KEY env var
-c.Authenticator.enable_auth_state = False
+
 
 # General
 # # JUPYTERHUB_CRYPT_KEY must be set in the ENV
