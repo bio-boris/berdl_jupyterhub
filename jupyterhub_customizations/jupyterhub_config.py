@@ -13,16 +13,22 @@ c.JupyterHub.template_paths = [os.environ['JUPYTERHUB_TEMPLATES_DIR']]
 c.JupyterHub.template_vars = {
     'kbase_origin': os.environ['KBASE_ORIGIN'],
 }
-
+# Requires JUPYTERHUB_CRYPT_KEY env var
+c.Authenticator.enable_auth_state = False
 
 # General
+# # JUPYTERHUB_CRYPT_KEY must be set in the ENV
+# The /jupyterhub.sqlite db needs to be persisted
 c.JupyterHub.ip = '0.0.0.0'
+c.JupyterHub.cookie_secret = bytes.fromhex(os.environ['JUPYTERHUB_COOKIE_SECRET_64_HEX_CHARS'])
+
+# Idle Behavior
+c.JupyterHub.spawner_class = 'kubespawner.KubeSpawner'
 
 
-
-
-
-
-# c.JupyterHub.cookie_secret_file = f"{os.environ['JUPYTERHUB_SECRETS_DIR']}/jupyterhub_cookie_secret"
-# c.JupyterHub.db_url = f"sqlite:///{os.environ['JUPYTERHUB_SECRETS_DIR']}/jupyterhub.sqlite"
-
+# shutdown the server after no activity for an hour
+c.ServerApp.shutdown_no_activity_timeout = 60 * 60
+# shutdown kernels after no activity for 20 minutes
+c.MappingKernelManager.cull_idle_timeout = 20 * 60
+# check for idle kernels every two minutes
+c.MappingKernelManager.cull_interval = 2 * 60

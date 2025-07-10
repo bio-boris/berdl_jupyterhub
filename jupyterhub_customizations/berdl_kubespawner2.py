@@ -12,7 +12,7 @@ from service.arg_checkers import not_falsy
 from spark import cluster
 
 
-class CustomKubeSpawner(KubeSpawner):
+class BERDLKubeSpawner(KubeSpawner):
     RW_MINIO_GROUP = 'minio_rw'
     DEFAULT_IDLE_TIMEOUT_MINUTES = 180
 
