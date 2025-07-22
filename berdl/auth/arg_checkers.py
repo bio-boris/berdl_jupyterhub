@@ -4,7 +4,7 @@
 import unicodedata
 from typing import Optional, TypeVar
 
-from auth.errors import IllegalParameterError, MissingParameterError
+from berdl.auth.errors import IllegalParameterError, MissingParameterError
 
 T = TypeVar('T')
 

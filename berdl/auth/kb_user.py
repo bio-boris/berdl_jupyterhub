@@ -2,7 +2,7 @@
 
 # Copied from https://github.com/kbase/collections
 
-from auth.arg_checkers import check_string as _check_string
+from berdl.auth.arg_checkers import check_string as _check_string
 
 
 class UserID:

@@ -4,7 +4,7 @@ import os
 from jupyterhub.auth import Authenticator
 from traitlets import Unicode, List
 
-from auth.kb_auth import KBaseAuth, MissingTokenError, AdminPermission
+from berdl.auth.kb_auth import KBaseAuth, MissingTokenError, AdminPermission
 
 logger = logging.getLogger(__name__)
 

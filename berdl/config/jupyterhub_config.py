@@ -1,4 +1,4 @@
-from jupyterhub_customizations.kb_jupyterhub_auth import KBaseAuthenticator
+from berdl.auth.kb_jupyterhub_auth import KBaseAuthenticator
 import os
 
 c = get_config()

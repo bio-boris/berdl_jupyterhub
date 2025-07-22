@@ -1,15 +1,20 @@
+# Set the base image
 FROM jupyterhub/jupyterhub:5.3.0
 
-COPY jupyterhub_customizations/ /opt/jupyterhub_customizations/
-COPY auth/ /opt/auth/
-COPY requirements.txt /opt/requirements.txt
-
-ENV PYTHONPATH=/opt:$PYTHONPATH
-ENV JUPYTERHUB_TEMPLATES_DIR=/opt/auth/templates
+# --- Environment Configuration ---
+ENV DESTINATION_DIR=/berdl
+ENV PYTHONPATH=${DESTINATION_DIR}:${PYTHONPATH}
+ENV JUPYTERHUB_TEMPLATES_DIR=${DESTINATION_DIR}/auth/templates
 ENV KBASE_ORIGIN="https://ci.kbase.us"
 
-COPY jupyterhub_customizations/jupyterhub_config.py /etc/jupyterhub/jupyterhub_config.py
+WORKDIR ${DESTINATION_DIR}
 
-RUN pip install -r /opt/requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY berdl/* /berdl
+
+
+# Set the entrypoint and default command to run the application.
 ENTRYPOINT ["jupyterhub"]
 CMD ["-f", "/etc/jupyterhub/jupyterhub_config.py"]

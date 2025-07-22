@@ -1,5 +1,13 @@
 # BERDL Custom JupyterHub Image
 
+
+# ENV VARS
+
+* KBASE_AUTH_URL
+* KBASE_ORIGIN
+
+
+# abc123
 This document outlines key considerations and design decisions for the BERDL Custom JupyterHub Image, including answers to open questions regarding its configuration and deployment.
 
 ---
