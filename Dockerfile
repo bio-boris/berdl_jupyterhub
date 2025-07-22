@@ -5,7 +5,6 @@ COPY auth/ /opt/auth/
 COPY requirements.txt /opt/requirements.txt
 
 ENV PYTHONPATH=/opt:$PYTHONPATH
-
 ENV JUPYTERHUB_TEMPLATES_DIR=/opt/auth/templates
 ENV KBASE_ORIGIN="https://ci.kbase.us"
 
