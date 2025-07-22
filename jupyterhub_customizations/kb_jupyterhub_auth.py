@@ -23,6 +23,7 @@ class KBaseAuthenticator(Authenticator):
     """
 
     SESSION_COOKIE_NAME = "kbase_session"
+    SESSION_COOKIE_BACKUP = "kbase_session_backup"
 
     kbase_auth_url = os.environ.get("KBASE_AUTH_URL", "https://ci.kbase.us/services/auth")
 
@@ -42,7 +43,10 @@ class KBaseAuthenticator(Authenticator):
         session_token = handler.get_cookie(self.SESSION_COOKIE_NAME)
 
         if not session_token:
-            raise MissingTokenError(f"Authentication required - missing {self.SESSION_COOKIE_NAME} cookie.")
+            session_token = handler.get_cookie(self.SESSION_COOKIE_BACKUP)
+
+        if not session_token:
+            raise MissingTokenError(f"Authentication required - missing {self.SESSION_COOKIE_NAME} and {self.SESSION_COOKIE_BACKUP} cookie.")
 
         kb_auth = KBaseAuth(self.kbase_auth_url, self.auth_full_admin_roles)
         kb_user = await kb_auth.get_user(session_token)
