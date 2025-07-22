@@ -9,15 +9,7 @@ from auth.kb_auth import KBaseAuth, MissingTokenError, AdminPermission
 logger = logging.getLogger(__name__)
 
 
-def kbase_origin() -> str:
-    """
-    Get the KBase origin based on the KB_ENV environment variable.
 
-    Returns:
-        str: The KBase origin. (default: ci.kbase.us)
-    """
-    kb_env = os.getenv("KB_ENV", "ci").lower()
-    return "kbase.us" if kb_env == "prod" else f"{kb_env}.kbase.us"
 
 
 class KBaseAuthenticator(Authenticator):
@@ -32,11 +24,7 @@ class KBaseAuthenticator(Authenticator):
 
     SESSION_COOKIE_NAME = "kbase_session"
 
-    kbase_auth_url = Unicode(
-        default_value=f"https://{kbase_origin()}/services/auth/",
-        config=True,
-        help="KBase Auth2 API URL (e.g., https://ci.kbase.us/services/auth/)"
-    )
+    kbase_auth_url = os.environ.get("KBASE_AUTH_URL", "https://ci.kbase.us/services/auth")
 
     auth_full_admin_roles = List(
         default_value=[
@@ -76,13 +64,6 @@ class KBaseAuthenticator(Authenticator):
         kbase_auth_token = auth_state.get("kbase_token")
 
         if not kbase_auth_token:
-            if not auth_state:
-                logger.error(f"Auth state for user {user.name} was empty. "
-                             "This often means c.Authenticator.enable_auth_state is False or JUPYTERHUB_CRYPT_KEY is incorrect.")
-            else:
-                logger.error(f"Auth state for user {user.name} found, but 'kbase_token' was missing. "
-                             f"Auth state contents: {auth_state.keys()}")
-
             raise MissingTokenError("Missing KBase authentication token in auth state")
 
         spawner.environment["KBASE_AUTH_TOKEN"] = kbase_auth_token
