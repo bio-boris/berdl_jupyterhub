@@ -17,4 +17,4 @@ COPY berdl/* /berdl
 
 # Set the entrypoint and default command to run the application.
 ENTRYPOINT ["jupyterhub"]
-CMD ["-f", "/etc/jupyterhub/jupyterhub_config.py"]
+CMD ["-f", "/berdl/config/jupyterhub_config.py"]
