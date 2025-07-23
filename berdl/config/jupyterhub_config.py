@@ -92,7 +92,7 @@ c.JupyterHub.services = [
             'python3',
             '-m', 'jupyterhub_idle_culler',
             '--timeout=30',      # Shutdown servers after 1 hour of inactivity
-            '--cull-every=600'     # Check for idle servers every 10 minutes
+            '--cull-every=60'     # Check for idle servers every 10 minutes
         ],
     }
 ]
