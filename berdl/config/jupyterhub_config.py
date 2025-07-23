@@ -15,6 +15,7 @@ c.JupyterHub.template_paths = [os.environ['JUPYTERHUB_TEMPLATES_DIR']]
 c.JupyterHub.template_vars = {
     'kbase_origin': os.environ['KBASE_ORIGIN'],
 }
+c.JupyterHub.cleanup_servers = False
 
 
 # ==============================================================================
@@ -37,7 +38,7 @@ c.JupyterHub.spawner_class = 'kubespawner.KubeSpawner'
 # --- Pod Definition ---
 # Defines the contents and metadata of the user's pod.
 #c.KubeSpawner.image = os.environ.get('JUPYTERHUB_USER_IMAGE', 'ghcr.io/bio-boris/berdl_notebook:main')
-c.KubeSpawner.labels = {"app": "berdl-notebook"}
+c.KubeSpawner.extra_labels = {"app": "berdl-notebook"}
 
 # --- Lifecycle and Culling ---
 # Manages how pods start, stop, and are culled when idle.
