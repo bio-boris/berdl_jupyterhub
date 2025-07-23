@@ -57,6 +57,8 @@ c.KubeSpawner.args = [
 # Networking and scheduling settings for Kubernetes.
 c.KubeSpawner.hub_connect_url = 'http://jupyterhub:8000'
 c.KubeSpawner.debug = True
+c.KubeSpawner.port = 8888 # To help avoid collision with other services
+c.KubeSpawner.services_enabled = True #TODO TEST THIS
 
 # Set a node selector if the environment variable is present
 node_hostname = os.environ.get("NODE_SELECTOR_HOSTNAME")
@@ -80,21 +82,19 @@ c.KubeSpawner.cpu_limit = float(cpu_limit)
 c.KubeSpawner.cpu_guarantee = float(cpu_guarantee)
 
 
-# This goes at the top level of the config, outside the spawner if/else block
 
-# --- Service for Culling Idle Servers ---
-# c.JupyterHub.services = [
-#     {
-#         'name': 'idle-culler',
-#         'admin': True,
-#         'command': [
-#             'python3',
-#             '-m', 'jupyterhub_idle_culler',
-#             '--timeout=3600',      # Shutdown servers after 1 hour of inactivity
-#             '--cull-every=600'     # Check for idle servers every 10 minutes
-#         ],
-#     }
-# ]
+c.JupyterHub.services = [
+    {
+        'name': 'idle-culler',
+        'admin': True,
+        'command': [
+            'python3',
+            '-m', 'jupyterhub_idle_culler',
+            '--timeout=30',      # Shutdown servers after 1 hour of inactivity
+            '--cull-every=600'     # Check for idle servers every 10 minutes
+        ],
+    }
+]
 
 
 # --- User-Selectable Profiles ---
