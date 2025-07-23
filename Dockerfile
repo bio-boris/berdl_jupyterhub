@@ -12,7 +12,7 @@ WORKDIR ${DESTINATION_DIR}
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY berdl/* /berdl
+COPY ./berdl/ /berdl/
 
 
 # Set the entrypoint and default command to run the application.
