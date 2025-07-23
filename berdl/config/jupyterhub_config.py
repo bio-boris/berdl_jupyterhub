@@ -36,7 +36,7 @@ c.JupyterHub.spawner_class = 'kubespawner.KubeSpawner'
 
 # --- Pod Definition ---
 # Defines the contents and metadata of the user's pod.
-c.KubeSpawner.image = os.environ.get('JUPYTERHUB_USER_IMAGE', 'ghcr.io/bio-boris/berdl_notebook:main')
+#c.KubeSpawner.image = os.environ.get('JUPYTERHUB_USER_IMAGE', 'ghcr.io/bio-boris/berdl_notebook:main')
 c.KubeSpawner.labels = {"app": "berdl-notebook"}
 
 # --- Lifecycle and Culling ---
@@ -73,26 +73,26 @@ c.KubeSpawner.mem_guarantee = f"{mem_guarantee_gb}G"
 
 # Parameterize CPU settings (user provides a number)
 cpu_limit = os.environ.get('JUPYTERHUB_CPU_LIMIT', '2.0')
-cpu_guarantee = os.environ.get('JUPYTERHUB_CPU_GUARANTEE', '0.5') # Added this line
+cpu_guarantee = os.environ.get('JUPYTERHUB_CPU_GUARANTEE', '0.5')
 c.KubeSpawner.cpu_limit = float(cpu_limit)
-c.KubeSpawner.cpu_guarantee = float(cpu_guarantee) # Added this line
+c.KubeSpawner.cpu_guarantee = float(cpu_guarantee)
 
 
 # This goes at the top level of the config, outside the spawner if/else block
 
 # --- Service for Culling Idle Servers ---
-c.JupyterHub.services = [
-    {
-        'name': 'idle-culler',
-        'admin': True,
-        'command': [
-            'python3',
-            '-m', 'jupyterhub_idle_culler',
-            '--timeout=3600',      # Shutdown servers after 1 hour of inactivity
-            '--cull-every=600'     # Check for idle servers every 10 minutes
-        ],
-    }
-]
+# c.JupyterHub.services = [
+#     {
+#         'name': 'idle-culler',
+#         'admin': True,
+#         'command': [
+#             'python3',
+#             '-m', 'jupyterhub_idle_culler',
+#             '--timeout=3600',      # Shutdown servers after 1 hour of inactivity
+#             '--cull-every=600'     # Check for idle servers every 10 minutes
+#         ],
+#     }
+# ]
 
 
 # --- User-Selectable Profiles ---
@@ -100,15 +100,18 @@ c.KubeSpawner.profile_list = [
     {
         'display_name': 'Small Server (2G RAM, 1 CPU)',
         'default': True,
+        'image': 'jupyter/base-notebook:latest',
         'kubespawner_override': {
             'mem_limit': '2G',
             'mem_guarantee': '1G',
             'cpu_limit': 1,
             'cpu_guarantee': 0.5
         }
+
     },
     {
         'display_name': 'Medium Server (8G RAM, 2 CPU)',
+        'image': 'jupyter/base-notebook:latest',
         'kubespawner_override': {
             'mem_limit': '8G',
             'mem_guarantee': '4G',
@@ -117,7 +120,8 @@ c.KubeSpawner.profile_list = [
         }
     },
     {
-        'display_name': 'Large Server (32G RAM, 4 CPU)',
+        'display_name': 'Large Server (32G RAM, 4 CPU) with BERDL image',
+        'image': 'ghcr.io/bio-boris/berdl_notebook:main',
         'kubespawner_override': {
             'mem_limit': '32G',
             'mem_guarantee': '16G',
