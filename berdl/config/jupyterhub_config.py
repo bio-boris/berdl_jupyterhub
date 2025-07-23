@@ -93,9 +93,7 @@ c.JupyterHub.services = [
         ],
     }
 ]
-# Expects hub to always run on a specific host with hub_data mounted to /hub_data 
-c.JupyterHub.db_url = f"sqlite:///hub_data/jupyterhub.sqlite"
-c.ConfigurableHTTPProxy.pid_file = "/hub_data/jupyterhub-proxy.pid"
+
 
 # --- User-Selectable Profiles ---
 c.KubeSpawner.profile_list = [
