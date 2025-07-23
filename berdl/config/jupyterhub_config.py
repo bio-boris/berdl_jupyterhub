@@ -15,6 +15,7 @@ c.JupyterHub.template_paths = [os.environ['JUPYTERHUB_TEMPLATES_DIR']]
 c.JupyterHub.template_vars = {
     'kbase_origin': os.environ['KBASE_ORIGIN'],
 }
+# Don't delete servers on restart!
 c.JupyterHub.cleanup_servers = False
 
 
@@ -48,8 +49,8 @@ c.KubeSpawner.delete_stopped_pods = True
 
 # Pass arguments to the user server for self-culling
 c.KubeSpawner.args = [
-    '--ServerApp.shutdown_no_activity_timeout=3600', # Shutdown server after 1hr of no activity
-    '--MappingKernelManager.cull_idle_timeout=1200'  # Shutdown kernels after 20min of no activity
+    '--ServerApp.shutdown_no_activity_timeout=30', # Shutdown server after 1hr of no activity
+    '--MappingKernelManager.cull_idle_timeout=30'  # Shutdown kernels after 20min of no activity
 ]
 
 # --- Kubernetes Specifics ---
