@@ -15,5 +15,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY ./berdl/ ${BERDL_DIR}/
 
+# This directory must be mounted in order to preserve the sqlite and pid files
+WORKDIR /srv/jupyterhub
 ENTRYPOINT ["jupyterhub"]
 CMD ["-f", "/hub/berdl/config/jupyterhub_config.py"]
