@@ -83,6 +83,7 @@ c.KubeSpawner.cpu_guarantee = float(cpu_guarantee)
 
 
 
+timeout = os.environ.get('JUPYTERHUB_IDLE_TIMEOUT_MINUTES', '60')
 c.JupyterHub.services = [
     {
         'name': 'idle-culler',
