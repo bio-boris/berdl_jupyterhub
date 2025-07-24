@@ -37,6 +37,7 @@ c.Authenticator.allow_all = True
 # How JupyterHub creates and manages individual user notebook servers.
 # ==============================================================================
 c.JupyterHub.spawner_class = "kubespawner.KubeSpawner"
+c.KubeSpawner.image_pull_policy = "Always"
 
 # --- Pod Definition ---
 # Defines the contents and metadata of the user's pod.
