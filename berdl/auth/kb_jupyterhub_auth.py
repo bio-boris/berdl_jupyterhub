@@ -9,9 +9,6 @@ from berdl.auth.kb_auth import KBaseAuth, MissingTokenError, AdminPermission
 logger = logging.getLogger(__name__)
 
 
-
-
-
 class KBaseAuthenticator(Authenticator):
     """
     Custom JupyterHub Authenticator for KBase.
@@ -25,14 +22,18 @@ class KBaseAuthenticator(Authenticator):
     SESSION_COOKIE_NAME = "kbase_session"
     SESSION_COOKIE_BACKUP = "kbase_session_backup"
 
-    kbase_auth_url = os.environ.get("KBASE_AUTH_URL", "https://ci.kbase.us/services/auth")
+    kbase_auth_url = os.environ.get(
+        "KBASE_AUTH_URL", "https://ci.kbase.us/services/auth"
+    )
 
     auth_full_admin_roles = List(
         default_value=[
-            role.strip() for role in os.getenv("AUTH_FULL_ADMIN_ROLES", "").split(",") if role.strip()
+            role.strip()
+            for role in os.getenv("AUTH_FULL_ADMIN_ROLES", "").split(",")
+            if role.strip()
         ],
         config=True,
-        help="Comma-separated list of KBase roles with full administrative access to JupyterHub."
+        help="Comma-separated list of KBase roles with full administrative access to JupyterHub.",
     )
 
     async def authenticate(self, handler, data=None) -> dict:
@@ -46,7 +47,9 @@ class KBaseAuthenticator(Authenticator):
             session_token = handler.get_cookie(self.SESSION_COOKIE_BACKUP)
 
         if not session_token:
-            raise MissingTokenError(f"Authentication required - missing {self.SESSION_COOKIE_NAME} and {self.SESSION_COOKIE_BACKUP} cookie.")
+            raise MissingTokenError(
+                f"Authentication required - missing {self.SESSION_COOKIE_NAME} and {self.SESSION_COOKIE_BACKUP} cookie."
+            )
 
         kb_auth = KBaseAuth(self.kbase_auth_url, self.auth_full_admin_roles)
         kb_user = await kb_auth.get_user(session_token)
@@ -57,7 +60,7 @@ class KBaseAuthenticator(Authenticator):
             "admin": kb_user.admin_perm == AdminPermission.FULL,
             "auth_state": {
                 "kbase_token": session_token,
-            }
+            },
         }
 
     async def pre_spawn_start(self, user, spawner) -> None:

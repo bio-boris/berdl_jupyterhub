@@ -34,14 +34,14 @@ class JupyterhubError(Exception):
     """
 
     def __init__(self, error_type: ErrorType, message: Optional[str] = None):
-        '''
+        """
         Create a Jupyterhub error.
         :param error_type: the error type of this error.
         :param message: an error message.
         :raises TypeError: if error_type is None
-        '''
+        """
         if not error_type:  # don't use not_falsy here, causes circular import
-            raise TypeError('error_type cannot be None')
+            raise TypeError("error_type cannot be None")
         msg = message.strip() if message and message.strip() else None
         super().__init__(msg)
         self.error_type = error_type
