@@ -49,16 +49,9 @@ c.KubeSpawner.start_timeout = 300  # 5 minutes
 c.KubeSpawner.http_timeout = 120  # 2 minutes
 c.KubeSpawner.delete_stopped_pods = True
 
-# Pass arguments to the user server for self-culling
-c.KubeSpawner.args = [
-    "--ServerApp.shutdown_no_activity_timeout=30",  # Shutdown server after 1hr of no activity
-    "--MappingKernelManager.cull_idle_timeout=30",  # Shutdown kernels after 20min of no activity
-]
-
 # --- Kubernetes Specifics ---
 # Networking and scheduling settings for Kubernetes.
 c.KubeSpawner.hub_connect_url = "http://jupyterhub:8000"
-c.KubeSpawner.debug = True
 c.KubeSpawner.port = 8888  # To help avoid collision with other services
 #c.KubeSpawner.services_enabled = True  # TODO TEST THIS
 
@@ -67,9 +60,12 @@ node_hostname = os.environ.get("NODE_SELECTOR_HOSTNAME")
 if node_hostname:
     c.KubeSpawner.node_selector = {"kubernetes.io/hostname": node_hostname}
 
+# Debugging
+c.KubeSpawner.debug = True
+c.JupyterHub.log_level = 'DEBUG'
+
 
 # --- Resource Management ---
-
 # Parameterize memory settings (user provides a number, code adds unit)
 mem_limit_gb = os.environ.get("JUPYTERHUB_MEM_LIMIT_GB", "4")
 mem_guarantee_gb = os.environ.get("JUPYTERHUB_MEM_GUARANTEE_GB", "1")
@@ -92,12 +88,13 @@ c.JupyterHub.services = [
             "python3",
             "-m",
             "jupyterhub_idle_culler",
-            f"--timeout={timeout}",  # Shutdown servers after 1 hour of inactivity
+            f"--timeout={timeout}",  # Shutdown servers after inactivity
             "--cull-every=600",  # Check for idle servers every 10 minutes
         ],
     }
 ]
 
+berdl_notebook_image_tag = os.environ.get("BERDL_NOTEBOOK_IMAGE_TAG", "ghcr.io/bio-boris/berdl_notebook:pr-1")
 
 # --- User-Selectable Profiles ---
 c.KubeSpawner.profile_list = [
@@ -124,7 +121,7 @@ c.KubeSpawner.profile_list = [
     },
     {
         "display_name": "Large Server (32G RAM, 4 CPU) with BERDL image",
-        "image": "ghcr.io/bio-boris/berdl_notebook:main",
+        "image": f"{berdl_notebook_image_tag}",
         "kubespawner_override": {
             "mem_limit": "32G",
             "mem_guarantee": "16G",
