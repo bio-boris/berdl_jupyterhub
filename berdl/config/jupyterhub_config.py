@@ -42,6 +42,14 @@ c.JupyterHub.spawner_class = "kubespawner.KubeSpawner"
 # Defines the contents and metadata of the user's pod.
 # c.KubeSpawner.image = os.environ.get('JUPYTERHUB_USER_IMAGE', 'ghcr.io/bio-boris/berdl_notebook:main')
 c.KubeSpawner.extra_labels = {"app": "berdl-notebook"}
+# Add NBUSER environment variable to the pod
+c.KubeSpawner.environment = {
+    "NB_USER": "{username}",
+    "KBASE_ORIGIN": os.environ["KBASE_ORIGIN"],
+}
+# Remove enableServiceLinks to avoid issues with service discovery and rely on DNS
+c.KubeSpawner.remove_enable_service_links = True
+
 
 # --- Lifecycle and Culling ---
 # Manages how pods start, stop, and are culled when idle.
@@ -94,6 +102,8 @@ c.JupyterHub.services = [
     }
 ]
 
+
+
 berdl_notebook_image_tag = os.environ.get("BERDL_NOTEBOOK_IMAGE_TAG", "ghcr.io/bio-boris/berdl_notebook:pr-1")
 
 # --- User-Selectable Profiles ---
@@ -110,8 +120,8 @@ c.KubeSpawner.profile_list = [
         },
     },
     {
-        "display_name": "Medium Server (8G RAM, 2 CPU)",
-        "image": "jupyter/base-notebook:latest",
+        "display_name": "Medium Server (8G RAM, 2 CPU) w quay.io/jupyter/pyspark-notebook:spark-4.0.0",
+        "image": "quay.io/jupyter/pyspark-notebook:spark-4.0.0",
         "kubespawner_override": {
             "mem_limit": "8G",
             "mem_guarantee": "4G",
@@ -120,7 +130,7 @@ c.KubeSpawner.profile_list = [
         },
     },
     {
-        "display_name": "Large Server (32G RAM, 4 CPU) with BERDL image",
+        "display_name": f"Large Server (32G RAM, 4 CPU) with f{berdl_notebook_image_tag}",
         "image": f"{berdl_notebook_image_tag}",
         "kubespawner_override": {
             "mem_limit": "32G",
