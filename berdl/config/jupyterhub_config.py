@@ -64,10 +64,7 @@ c.KubeSpawner.hub_connect_url = "http://jupyterhub:8000"
 c.KubeSpawner.port = 8888  # To help avoid collision with other services
 #c.KubeSpawner.services_enabled = True  # TODO TEST THIS
 
-# Set a node selector if the environment variable is present
-node_hostname = os.environ.get("NODE_SELECTOR_HOSTNAME")
-if node_hostname:
-    c.KubeSpawner.node_selector = {"kubernetes.io/hostname": node_hostname}
+
 
 # Debugging
 c.KubeSpawner.debug = True
@@ -143,4 +140,44 @@ c.KubeSpawner.profile_list = [
             "image": f"{berdl_notebook_image_tag}",
         },
     },
+]
+
+# Storage
+# For now, we are binding workers to kworker02. We can investigate other solutions for storage
+# Thse mounts below are dependent on the kworker02 node having the /mnt/state/hub/{username} and /mnt/state/hub/global_share directories
+# Mount /home/user/ from /mnt/state/hub/user for each notebook
+# This also stops us from scaling the number of notebook containers due to specifying the "cpu_guarantee" and "mem_guarantee" parameters
+# The specs of kworker02 are: 168 cores, 1TB RAM, 11.TB  storage
+
+
+node_hostname = os.environ.get("NODE_SELECTOR_HOSTNAME","kworker02")
+if node_hostname:
+    c.KubeSpawner.node_selector = {"kubernetes.io/hostname": node_hostname}
+
+
+c.KubeSpawner.volumes = [
+    {
+        "name": "user-home",
+        "hostPath": {
+            "path": "/mnt/state/hub/{username}",
+            "type": "Directory"
+        }
+    },
+    {
+        "name": "user-global",
+        "hostPath": {
+            "path": "/mnt/state/hub/global_share",
+            "type": "Directory"
+        }
+    }
+]
+c.KubeSpawner.volume_mounts = [
+    {
+        "name": "user-home",
+        "mountPath": "/home/{username}"
+    },
+    {
+        "name": "user-global",
+        "mountPath": "/global_share"
+    }
 ]
