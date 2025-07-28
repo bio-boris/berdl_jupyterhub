@@ -47,6 +47,7 @@ c.KubeSpawner.extra_labels = {"app": "berdl-notebook"}
 # Add NBUSER environment variable to the pod
 # See https://jupyterhub-kubespawner.readthedocs.io/en/latest/templates.html for template variables
 
+# Users get a copy of these environment variables
 c.KubeSpawner.environment = {
     "NB_USER": "{username}",
     "KBASE_ORIGIN": os.environ["KBASE_ORIGIN"],
@@ -54,8 +55,6 @@ c.KubeSpawner.environment = {
     "SPARK_JOB_LOG_DIR_CATEGORY": "{username}",
 }
 
-self.environment["SPARK_DRIVER_HOST"] = self.pod_name
-self.environment["SPARK_JOB_LOG_DIR_CATEGORY"] = username
 
 
 # Remove enableServiceLinks to avoid issues with service discovery and rely on DNS
@@ -179,10 +178,6 @@ c.KubeSpawner.volume_mounts = [
     {"name": "user-home", "mountPath": "/home/{username}"},
     {"name": "user-global", "mountPath": "/global_share"},
 ]
-
-# start up spark cluster from spark_utils by calling the spark_utils api with a startup hook, passing in auth token
-from berdl.spark_utils.spark_utils import start_spark_cluster, stop_spark_cluster
-
-
-c.KubeSpawner.pre_spawn_hook = "berdl.spark_utils.spark_utils.start_spark_cluster"
-c.KubeSpawner.post_stop_hook = "berdl.spark_utils.spark_utils.stop_spark_cluster"
+from berdl.config.spark_utils import pre_spawn_hook, post_stop_hook
+c.KubeSpawner.pre_spawn_hook = pre_spawn_hook
+c.KubeSpawner.post_stop_hook = post_stop_hook
