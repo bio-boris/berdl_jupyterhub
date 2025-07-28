@@ -1,4 +1,5 @@
 import os
+
 from berdl.auth.kb_jupyterhub_auth import KBaseAuthenticator
 
 c = get_config()
@@ -44,10 +45,19 @@ c.KubeSpawner.image_pull_policy = "Always"
 # c.KubeSpawner.image = os.environ.get('JUPYTERHUB_USER_IMAGE', 'ghcr.io/bio-boris/berdl_notebook:main')
 c.KubeSpawner.extra_labels = {"app": "berdl-notebook"}
 # Add NBUSER environment variable to the pod
+# See https://jupyterhub-kubespawner.readthedocs.io/en/latest/templates.html for template variables
+
 c.KubeSpawner.environment = {
     "NB_USER": "{username}",
     "KBASE_ORIGIN": os.environ["KBASE_ORIGIN"],
+    "SPARK_DRIVER_HOST": "{pod_name}",
+    "SPARK_JOB_LOG_DIR_CATEGORY": "{username}",
 }
+
+self.environment["SPARK_DRIVER_HOST"] = self.pod_name
+self.environment["SPARK_JOB_LOG_DIR_CATEGORY"] = username
+
+
 # Remove enableServiceLinks to avoid issues with service discovery and rely on DNS
 c.KubeSpawner.remove_enable_service_links = True
 
@@ -62,13 +72,12 @@ c.KubeSpawner.delete_stopped_pods = True
 # Networking and scheduling settings for Kubernetes.
 c.KubeSpawner.hub_connect_url = "http://jupyterhub:8000"
 c.KubeSpawner.port = 8888  # To help avoid collision with other services
-#c.KubeSpawner.services_enabled = True  # TODO TEST THIS
-
+# c.KubeSpawner.services_enabled = True  # TODO TEST THIS
 
 
 # Debugging
 c.KubeSpawner.debug = True
-c.JupyterHub.log_level = 'DEBUG'
+c.JupyterHub.log_level = "DEBUG"
 
 
 # --- Resource Management ---
@@ -101,15 +110,15 @@ c.JupyterHub.services = [
 ]
 
 
-
-berdl_notebook_image_tag = os.environ.get("BERDL_NOTEBOOK_IMAGE_TAG", "ghcr.io/bio-boris/berdl_notebook:pr-1")
+berdl_notebook_image_tag = os.environ.get(
+    "BERDL_NOTEBOOK_IMAGE_TAG", "ghcr.io/bio-boris/berdl_notebook:main"
+)
 
 # --- User-Selectable Profiles ---
 c.KubeSpawner.profile_list = [
     {
         "display_name": "Small Server (2G RAM, 1 CPU)",
         "default": True,
-
         "kubespawner_override": {
             "mem_limit": "2G",
             "mem_guarantee": "1G",
@@ -120,7 +129,6 @@ c.KubeSpawner.profile_list = [
     },
     {
         "display_name": "Medium Server (8G RAM, 2 CPU) w quay.io/jupyter/pyspark-notebook:spark-4.0.0",
-
         "kubespawner_override": {
             "mem_limit": "8G",
             "mem_guarantee": "4G",
@@ -131,7 +139,6 @@ c.KubeSpawner.profile_list = [
     },
     {
         "display_name": f"Large Server (32G RAM, 4 CPU) with {berdl_notebook_image_tag}",
-
         "kubespawner_override": {
             "mem_limit": "32G",
             "mem_guarantee": "16G",
@@ -144,13 +151,13 @@ c.KubeSpawner.profile_list = [
 
 # Storage
 # For now, we are binding workers to kworker02. We can investigate other solutions for storage
-# Thse mounts below are dependent on the kworker02 node having the /mnt/state/hub/{username} and /mnt/state/hub/global_share directories
+# These mounts below are dependent on the kworker02 node having the /mnt/state/hub/{username} and /mnt/state/hub/global_share directories
 # Mount /home/user/ from /mnt/state/hub/user for each notebook
 # This also stops us from scaling the number of notebook containers due to specifying the "cpu_guarantee" and "mem_guarantee" parameters
 # The specs of kworker02 are: 168 cores, 1TB RAM, 11.TB  storage
 
 
-node_hostname = os.environ.get("NODE_SELECTOR_HOSTNAME","kworker02")
+node_hostname = os.environ.get("NODE_SELECTOR_HOSTNAME", "kworker02")
 if node_hostname:
     c.KubeSpawner.node_selector = {"kubernetes.io/hostname": node_hostname}
 
@@ -158,26 +165,24 @@ if node_hostname:
 c.KubeSpawner.volumes = [
     {
         "name": "user-home",
-        "hostPath": {
-            "path": "/mnt/state/hub/{username}",
-            "type": "DirectoryOrCreate"
-        }
+        "hostPath": {"path": "/mnt/state/hub/{username}", "type": "DirectoryOrCreate"},
     },
     {
         "name": "user-global",
         "hostPath": {
             "path": "/mnt/state/hub/global_share",
-            "type": "DirectoryOrCreate"
-        }
-    }
+            "type": "DirectoryOrCreate",
+        },
+    },
 ]
 c.KubeSpawner.volume_mounts = [
-    {
-        "name": "user-home",
-        "mountPath": "/home/{username}"
-    },
-    {
-        "name": "user-global",
-        "mountPath": "/global_share"
-    }
+    {"name": "user-home", "mountPath": "/home/{username}"},
+    {"name": "user-global", "mountPath": "/global_share"},
 ]
+
+# start up spark cluster from spark_utils by calling the spark_utils api with a startup hook, passing in auth token
+from berdl.spark_utils.spark_utils import start_spark_cluster, stop_spark_cluster
+
+
+c.KubeSpawner.pre_spawn_hook = "berdl.spark_utils.spark_utils.start_spark_cluster"
+c.KubeSpawner.post_stop_hook = "berdl.spark_utils.spark_utils.stop_spark_cluster"

@@ -15,6 +15,11 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY ./berdl/ ${BERDL_DIR}/
 
+
+# GET KBASE cdm-spark-cluster-manager-api-client /src/spark directory
+ADD ghcr.io/kbase/cdm-jupyterhub:pr-222:/src/spark/ ${BERDL_DIR}/
+
+
 # This default directory must be mounted in order to preserve the sqlite and pid files
 WORKDIR /srv/jupyterhub
 ENTRYPOINT ["jupyterhub"]
