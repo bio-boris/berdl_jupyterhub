@@ -160,14 +160,14 @@ c.KubeSpawner.volumes = [
         "name": "user-home",
         "hostPath": {
             "path": "/mnt/state/hub/{username}",
-            "type": "Directory"
+            "type": "DirectoryOrCreate"
         }
     },
     {
         "name": "user-global",
         "hostPath": {
             "path": "/mnt/state/hub/global_share",
-            "type": "Directory"
+            "type": "DirectoryOrCreate"
         }
     }
 ]
