@@ -1,4 +1,4 @@
-
+from berdl.clients.spark import cluster
 class SparkClusterManager:
     """
     Manages Spark clusters for users in the KBase environment.
@@ -9,6 +9,7 @@ class SparkClusterManager:
     def __init__(self, spawner):
         self.spawner = spawner
         self.user = spawner.user
+        self.token = spawner.user.auth_state.get("kbase_auth_token", None)
 
     @classmethod
     def get_singleton(cls, spawner):
@@ -58,11 +59,11 @@ class SparkClusterManager:
 def pre_spawn_hook(spawner):
     # Get the auth token from a secure source
     kbase_auth_token = os.environ.get("KBASE_AUTH_TOKEN")
-    manager = SparkClusterManager(spawner,spawner.user)
+    manager = SparkClusterManager(spawner)
     manager.start_spark_cluster(kbase_auth_token)
 
 def post_stop_hook(spawner):
     # Get the auth token from a secure source
     kbase_auth_token = os.environ.get("KBASE_AUTH_TOKEN")
-    manager = SparkClusterManager(spawner,spawner.user)
+    manager = SparkClusterManager(spawner)
     manager.stop_spark_cluster(kbase_auth_token)
