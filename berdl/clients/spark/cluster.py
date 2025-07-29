@@ -4,7 +4,8 @@ CDM Spark Cluster Manager API Client Wrapper
 
 import os
 
-from service.arg_checkers import not_falsy
+# So this is not part of the client, but it depends on outside code
+from berdl.auth.arg_checkers import not_falsy
 
 from .cdm_spark_cluster_manager_api_client.api.clusters import (
     create_cluster_clusters_post,
