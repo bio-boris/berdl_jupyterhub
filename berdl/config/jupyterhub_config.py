@@ -1,6 +1,7 @@
 import os
 
 from berdl.auth.kb_jupyterhub_auth import KBaseAuthenticator
+from berdl.config.spark_utils import pre_spawn_hook, post_stop_hook
 
 c = get_config()
 
@@ -178,6 +179,6 @@ c.KubeSpawner.volume_mounts = [
     {"name": "user-home", "mountPath": "/home/{username}"},
     {"name": "user-global", "mountPath": "/global_share"},
 ]
-from berdl.config.spark_utils import pre_spawn_hook, post_stop_hook
+
 c.KubeSpawner.pre_spawn_hook = pre_spawn_hook
 c.KubeSpawner.post_stop_hook = post_stop_hook
