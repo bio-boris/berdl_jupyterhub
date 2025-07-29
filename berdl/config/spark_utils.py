@@ -56,7 +56,7 @@ class SparkClusterManager:
 
 
 
-def lpre_spawn_hook(spawner):
+def pre_spawn_hook(spawner):
     # Get the auth token from a secure source
     kbase_auth_token = os.environ.get("KBASE_AUTH_TOKEN")
     manager = SparkClusterManager(spawner)
