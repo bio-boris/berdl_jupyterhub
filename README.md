@@ -33,6 +33,9 @@ The container is configured at runtime using the following environment variables
 | `BERDL_NOTEBOOK_IMAGE_TAG`               | `ghcr.io/bio-boris/berdl_notebook:pr-1` | The tag of the BERDL notebook image to use for user servers.                     |
 ---
 
+* add KBASE_AUTH_TOKEN
+* add SPARK_CLUSTER_MANAGER_API_URL
+
 **Note**: Variables with a default value of `_(none)_` **must be set at runtime**. All other variables are optional and will use their default if not provided.
 
 

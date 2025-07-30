@@ -56,15 +56,3 @@ class SparkClusterManager:
             spawner.log.error(f"Error deleting Spark cluster for user {username}: {str(e)}")
 
 
-async def pre_spawn_hook(spawner):
-    """
-    Hook to create a Spark cluster before the user's server starts.
-    """
-    await SparkClusterManager.start_spark_cluster(spawner)
-
-
-async def post_stop_hook(spawner):
-    """
-    Hook to delete the Spark cluster after the user's server stops.
-    """
-    await SparkClusterManager.stop_spark_cluster(spawner)
