@@ -183,11 +183,16 @@ c.KubeSpawner.volume_mounts = [
 
 # Add extra options for the pod template to disable "enableServiceLinks"
 c.KubeSpawner.extra_pod_config = {
-    "spec": {
-        "enableServiceLinks": False,
-    }
+    "enableServiceLinks": False,
 }
+# Set root dir to be the root directory of the pod and set the default URL to JupyterLab
+c.KubeSpawner.cmd = ['start-notebook.sh']
+c.KubeSpawner.args = [
+    '--ServerApp.root_dir=/'
+    '--ServerApp.default_url=/lab',  # Uncomment to set default URL to JupyterLab
+]
 
+# The default command runs 'start-notebook.sh', which passes these args along.
 
 
 berdl.config.utils.pre_spawn_hook = pre_spawn_hook
