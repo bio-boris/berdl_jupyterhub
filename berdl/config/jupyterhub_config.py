@@ -187,7 +187,11 @@ c.KubeSpawner.extra_pod_config = {
         "enableServiceLinks": False,
     }
 }
-
+# Set root dir and default_Url
+c.KubeSpawner.args = [
+    "--ServerApp.root_dir=/",
+    "--ServerApp.default_url=/lab/tree/home/{username}",
+]
 
 
 berdl.config.utils.pre_spawn_hook = pre_spawn_hook
