@@ -59,8 +59,7 @@ c.KubeSpawner.environment = {
 
 
 
-# Remove enableServiceLinks to avoid issues with service discovery and rely on DNS
-c.KubeSpawner.remove_enable_service_links = True
+
 
 
 # --- Lifecycle and Culling ---
@@ -180,6 +179,16 @@ c.KubeSpawner.volume_mounts = [
     {"name": "user-home", "mountPath": "/home/{username}"},
     {"name": "user-global", "mountPath": "/global_share"},
 ]
+
+
+# Add extra options for the pod template to disable "enableServiceLinks"
+c.KubeSpawner.extra_pod_config = {
+    "spec": {
+        "enableServiceLinks": False,
+    }
+}
+
+
 
 berdl.config.utils.pre_spawn_hook = pre_spawn_hook
 berdl.config.utils.post_stop_hook = post_stop_hook

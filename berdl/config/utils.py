@@ -7,6 +7,7 @@ async def pre_spawn_hook(spawner):
     """
     # If this is using the user's token, rather than a service token, maybe this logic should moved into jupyter notebook itself.
     # Or we should make the notebook still be able to start up, even if the cluster is not created due to some error?
+    # if the spark cluster is already running, this crashes...
     await SparkClusterManager.start_spark_cluster(spawner)
 
 
