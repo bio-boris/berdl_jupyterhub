@@ -188,7 +188,7 @@ c.KubeSpawner.extra_pod_config = {
 # Set root dir to be the root directory of the pod and set the default URL to JupyterLab
 c.KubeSpawner.cmd = ['start-notebook.sh']
 c.KubeSpawner.args = [
-    '--ServerApp.root_dir=/'
+    '--ServerApp.root_dir=/',
     '--ServerApp.default_url=/lab',  # Uncomment to set default URL to JupyterLab
 ]
 
