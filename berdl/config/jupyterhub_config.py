@@ -63,8 +63,8 @@ c.KubeSpawner.fs_group = 100
 c.KubeSpawner.environment.update(
     {
         "NB_USER": "{username}",
-        "NB_UID": "{uid}",
-        "NB_GID": "{gid}",
+        # "NB_UID": "{uid}",
+        # "NB_GID": "{gid}",
         "CHOWN_HOME": "yes",
     }
 )
