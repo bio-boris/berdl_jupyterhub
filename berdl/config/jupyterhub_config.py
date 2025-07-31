@@ -68,6 +68,10 @@ c.KubeSpawner.environment.update(
         "CHOWN_HOME": "yes",
     }
 )
+# Change working directory to the user's home directory
+c.KubeSpawner.notebook_dir = "/home/{username}"
+
+
 # TODO, add post start hook to inject minio credentials into the pod
 
 
