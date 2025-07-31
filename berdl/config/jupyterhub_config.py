@@ -57,14 +57,14 @@ c.KubeSpawner.environment = {
     "SPARK_JOB_LOG_DIR_CATEGORY": "{username}",
 }
 # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#user-related-configurations
-c.KubeSpawner.uid = 1000
-c.KubeSpawner.gid = 100
-c.KubeSpawner.fs_group = 100
+# c.KubeSpawner.uid = 0
+# c.KubeSpawner.gid = 0
+# c.KubeSpawner.fs_group = 100
 c.KubeSpawner.environment.update(
     {
         "NB_USER": "{username}",
-        # "NB_UID": "{uid}",
-        # "NB_GID": "{gid}",
+         # "NB_UID": "{uid}",
+         # "NB_GID": "{gid}",
         "CHOWN_HOME": "yes",
     }
 )
