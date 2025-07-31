@@ -49,15 +49,26 @@ c.KubeSpawner.extra_labels = {"app": "berdl-notebook"}
 # Add NBUSER environment variable to the pod
 # See https://jupyterhub-kubespawner.readthedocs.io/en/latest/templates.html for template variables
 
-# Users get a copy of these environment variables
+
+# BERDL Specific Environment Variables
 c.KubeSpawner.environment = {
-    "NB_USER": "{username}",
     "KBASE_ORIGIN": os.environ["KBASE_ORIGIN"],
-    "SPARK_DRIVER_HOST": "{pod_name}",
+    "SPARK_DRIVER_HOST": "{pod_name}", #need to set this to pod_ip
     "SPARK_JOB_LOG_DIR_CATEGORY": "{username}",
 }
-
-
+# https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#user-related-configurations
+c.KubeSpawner.uid = 1000
+c.KubeSpawner.gid = 100
+c.KubeSpawner.fs_group = 100
+c.KubeSpawner.environment.update(
+    {
+        "NB_USER": "{username}",
+        "NB_UID": "{uid}",
+        "NB_GID": "{gid}",
+        "CHOWN_HOME": "yes",
+    }
+)
+# TODO, add post start hook to inject minio credentials into the pod
 
 
 
@@ -179,9 +190,11 @@ c.KubeSpawner.volume_mounts = [
     {"name": "user-home", "mountPath": "/home/{username}"},
     {"name": "user-global", "mountPath": "/global_share"},
 ]
-
+# Set permissions on the volume mounts
+#c.KubeSpawner.
 
 # Add extra options for the pod template to disable "enableServiceLinks"
+# TODO ADD POD IP
 c.KubeSpawner.extra_pod_config = {
     "enableServiceLinks": False,
 }
