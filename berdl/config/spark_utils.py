@@ -39,6 +39,7 @@ class SparkClusterManager:
             if master_url:
                 spawner.log.info(f"Spark cluster created with master URL: {master_url}")
                 spawner.environment["SPARK_MASTER_URL"] = master_url
+
             else:
                 raise ValueError(f"Master URL not found in response: {response}")
         except Exception as e:
