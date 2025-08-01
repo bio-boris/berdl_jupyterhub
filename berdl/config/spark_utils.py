@@ -6,6 +6,10 @@ class SparkClusterManager:
     A utility class with static methods to manage Spark clusters for users.
     It retrieves the necessary authentication token from the spawner's user auth_state.
     """
+
+    def __init__(self):
+        pass
+
     @staticmethod
     async def _get_auth_token(spawner) -> str:
         """Helper method to retrieve and validate the auth token from the user's auth_state."""

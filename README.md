@@ -68,3 +68,7 @@ To improve separation of concerns, some methods can be shifted from the `CustomK
     * **User/Server Lifecycle Management:** Logic for idle culling (`poll`), determining admin status for resource allocation, or handling user/group-based logic that directly affects the *Kubernetes pod specification* for a user.
 
 ---
+
+
+# User Guide
+-- Users must install with pip install --user to preserve

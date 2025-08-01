@@ -2,7 +2,8 @@ import os
 
 import berdl.config.utils
 from berdl.auth.kb_jupyterhub_auth import KBaseAuthenticator
-from berdl.config.utils import pre_spawn_hook, post_stop_hook
+from berdl.config.utils import pre_spawn_hook, post_stop_hook, modify_pod_hook
+
 
 c = get_config()
 
@@ -55,17 +56,16 @@ c.KubeSpawner.environment = {
     "KBASE_ORIGIN": os.environ["KBASE_ORIGIN"],
     "SPARK_DRIVER_HOST": "{pod_name}", #need to set this to pod_ip
     "SPARK_JOB_LOG_DIR_CATEGORY": "{username}",
+    # pod ip
+    "pod_ip" : "{pod_ip}",  # This will be set by KubeSpawner
 }
 # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#user-related-configurations
-# c.KubeSpawner.uid = 0
-# c.KubeSpawner.gid = 0
-# c.KubeSpawner.fs_group = 100
+
 c.KubeSpawner.environment.update(
     {
         "NB_USER": "{username}",
-         # "NB_UID": "{uid}",
-         # "NB_GID": "{gid}",
         "CHOWN_HOME": "yes",
+        "GEN_CERT": "yes"
     }
 )
 # Change working directory to the user's home directory
@@ -214,3 +214,4 @@ c.KubeSpawner.args = [
 
 berdl.config.utils.pre_spawn_hook = pre_spawn_hook
 berdl.config.utils.post_stop_hook = post_stop_hook
+c.KubeSpawner.modify_pod_hook = modify_pod_hook
