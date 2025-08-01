@@ -1,6 +1,6 @@
 import os
 
-import berdl.config.hooks
+import berdl.config.hooks.hooks
 from berdl.auth.kb_jupyterhub_auth import KBaseAuthenticator
 from berdl.config.hooks import pre_spawn_hook, post_stop_hook, modify_pod_hook
 
@@ -58,24 +58,18 @@ c.KubeSpawner.environment = {
 }
 # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#user-related-configurations
 c.KubeSpawner.environment.update(
-    {
-        "NB_USER": "{username}",
-        "CHOWN_HOME": "yes",
-        "GEN_CERT": "yes"
-    }
+    {"NB_USER": "{username}", "CHOWN_HOME": "yes", "GEN_CERT": "yes"}
 )
 # Change working directory to the user's home directory
 c.KubeSpawner.notebook_dir = "/home/{username}"
 # Set root dir to be the root directory of the pod and set the default URL to JupyterLab
-c.KubeSpawner.cmd = ['start-notebook.sh']
+c.KubeSpawner.cmd = ["start-notebook.sh"]
 c.KubeSpawner.args = [
-    '--ServerApp.root_dir=/',
-    '--ServerApp.default_url=/lab',  # Uncomment to set default URL to JupyterLab
+    "--ServerApp.root_dir=/",
+    "--ServerApp.default_url=/lab",  # Uncomment to set default URL to JupyterLab
 ]
 
 # TODO, add post start hook to inject minio credentials into the pod
-
-
 
 
 # --- Lifecycle and Culling ---
@@ -196,7 +190,7 @@ c.KubeSpawner.volume_mounts = [
     {"name": "user-global", "mountPath": "/global_share"},
 ]
 # Set permissions on the volume mounts
-#c.KubeSpawner.
+# c.KubeSpawner.
 
 # Add extra options for the pod template to disable "enableServiceLinks"
 # TODO ADD POD IP
@@ -208,6 +202,6 @@ c.KubeSpawner.extra_pod_config = {
 # The default command runs 'start-notebook.sh', which passes these args along.
 
 
-berdl.config.hooks.pre_spawn_hook = pre_spawn_hook
-berdl.config.hooks.post_stop_hook = post_stop_hook
+berdl.config.hooks.hooks.pre_spawn_hook = pre_spawn_hook
+berdl.config.hooks.hooks.post_stop_hook = post_stop_hook
 c.KubeSpawner.modify_pod_hook = modify_pod_hook
