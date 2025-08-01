@@ -1,6 +1,6 @@
 import os
 
-import berdl.config.hooks.hooks
+import berdl.config.hooks.kubespawner_hooks
 from berdl.auth.kb_jupyterhub_auth import KBaseAuthenticator
 from berdl.config.hooks import pre_spawn_hook, post_stop_hook, modify_pod_hook
 
