@@ -201,7 +201,7 @@ c.KubeSpawner.extra_pod_config = {
 
 # The default command runs 'start-notebook.sh', which passes these args along.
 
-
-berdl.config.hooks.hooks.pre_spawn_hook = pre_spawn_hook
-berdl.config.hooks.hooks.post_stop_hook = post_stop_hook
+# Hooks for pre-spawn and post-stop actions
+c.KubeSpawner.pre_spawn_hook = pre_spawn_hook
+c.KubeSpawner.post_spawn_hook = post_stop_hook
 c.KubeSpawner.modify_pod_hook = modify_pod_hook
