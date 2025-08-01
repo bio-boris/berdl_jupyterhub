@@ -2,3 +2,6 @@ aiohttp==3.12.13
 jupyterhub-kubespawner==7.0.0
 jupyterhub_idle_culler==1.4.0
 httpx==0.28.1
+json5
+fasteners
+kubernetes
