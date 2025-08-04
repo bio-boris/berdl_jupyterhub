@@ -5,3 +5,4 @@ httpx==0.28.1
 json5
 fasteners
 kubernetes
+cdm-spark-manager-client @ git+https://github.com/kbase/cdm-kube-spark-manager-client.git@0.0.1
