@@ -81,7 +81,6 @@ def create_cluster(
         force: Skip confirmation prompt if True
     """
 
-
     client = _get_authenticated_client(kbase_auth_token)
     with client as client:
         # Create the config object

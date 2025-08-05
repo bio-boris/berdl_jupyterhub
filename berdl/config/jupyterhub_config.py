@@ -28,14 +28,12 @@ c.JupyterHub.cleanup_servers = False
 # ==============================================================================
 # ## Authenticator Configuration
 # How users will log in to JupyterHub.
+# Requires JUPYTERHUB_CRYPT_KEY environment variable to be set
+# Allows any user with a valid KBASE token to log in
 # ==============================================================================
 c.JupyterHub.authenticator_class = KBaseAuthenticator
-# Requires JUPYTERHUB_CRYPT_KEY environment variable to be set
 c.Authenticator.enable_auth_state = True
-# Allows any user with a valid KBASE token to log in
 c.Authenticator.allow_all = True
-
-
 # ==============================================================================
 # ## Spawner Configuration
 # How JupyterHub creates and manages individual user notebook servers.
