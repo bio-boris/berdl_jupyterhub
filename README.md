@@ -31,21 +31,24 @@ The container is configured at runtime using the following environment variables
 | `KBASE_ORIGIN`                           | `https://ci.kbase.us`                   | The KBase service URL used by the auth login html.                               |
 | `NODE_SELECTOR_HOSTNAME`                 | _(none)_                                | If set, forces user notebook pods to be scheduled on a specific Kubernetes node. |
 | `BERDL_NOTEBOOK_IMAGE_TAG`               | `ghcr.io/bio-boris/berdl_notebook:pr-1` | The tag of the BERDL notebook image to use for user servers.                     |
+| `SPARK_CLUSTER_MANAGER_API_URL`          | _(none)_                                | The URL for the Spark Cluster Manager API.                                       |
 ---
 
-* add KBASE_AUTH_TOKEN
-* add SPARK_CLUSTER_MANAGER_API_URL
 
 **Note**: Variables with a default value of `_(none)_` **must be set at runtime**. All other variables are optional and will use their default if not provided.
 
 
 # User Guide
+# TODO Move to the notebook image repo
 -- Users must install with pip install --user to preserve
 
 
-# Future Work
+# Future Work and Known Issues
 
 ---
 * Consider backing up the sqlite database
 * Considerate Separate configurable-http-proxy Proxy
 * Test Environment setup
+* All hub data is not backed up, and saved to a single mount on the host
+* Only one host is supported at this time.
+* Make sure all env vars are documented

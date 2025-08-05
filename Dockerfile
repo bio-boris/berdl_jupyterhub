@@ -1,6 +1,9 @@
 # Set the base image
 FROM jupyterhub/jupyterhub:5.3.0
 
+# Required for installing python packages from git
+RUN apt-get update && apt-get install -y git
+
 # --- Environment Configuration ---
 # Define variables for all key paths
 ENV HUB_DIR=/hub
@@ -15,9 +18,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY ./berdl/ ${BERDL_DIR}/
 
-
-# GET KBASE cdm-spark-cluster-manager-api-client /src/spark directory
-#ADD ghcr.io/kbase/cdm-jupyterhub:pr-222:/src/spark/ ${BERDL_DIR}/
 
 
 # This default directory must be mounted in order to preserve the sqlite and pid files
