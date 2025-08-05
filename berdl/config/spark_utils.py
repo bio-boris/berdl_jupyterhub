@@ -1,5 +1,5 @@
 from berdl.clients.spark import cluster
-from typing import Optional
+
 
 class SparkClusterManager:
     """
@@ -18,7 +18,7 @@ class SparkClusterManager:
             spawner.log.error("KBase auth_state not found for user.")
             raise RuntimeError("KBase authentication state is missing.")
 
-        kb_auth_token: Optional[str] = auth_state.get("kbase_token")
+        kb_auth_token: str | None = auth_state.get("kbase_token")
         if not kb_auth_token:
             spawner.log.error("KBase token not found in auth_state.")
             raise RuntimeError("KBase authentication token is missing from auth_state.")
@@ -33,7 +33,9 @@ class SparkClusterManager:
         kb_auth_token = await SparkClusterManager._get_auth_token(spawner)
         try:
             spawner.log.info(f"Creating Spark cluster for user {username}")
-            response = cluster.create_cluster(kbase_auth_token=kb_auth_token, force=True)
+            response = cluster.create_cluster(
+                kbase_auth_token=kb_auth_token, force=True
+            )
 
             master_url = getattr(response, "master_url", None)
             if master_url:
@@ -43,7 +45,9 @@ class SparkClusterManager:
             else:
                 raise ValueError(f"Master URL not found in response: {response}")
         except Exception as e:
-            spawner.log.error(f"Error creating Spark cluster for user {username}: {str(e)}")
+            spawner.log.error(
+                f"Error creating Spark cluster for user {username}: {str(e)}"
+            )
             raise
 
     @staticmethod
@@ -58,6 +62,6 @@ class SparkClusterManager:
             cluster.delete_cluster(kbase_auth_token=kb_auth_token)
             spawner.log.info(f"Spark cluster deleted for user {username}")
         except Exception as e:
-            spawner.log.error(f"Error deleting Spark cluster for user {username}: {str(e)}")
-
-
+            spawner.log.error(
+                f"Error deleting Spark cluster for user {username}: {str(e)}"
+            )

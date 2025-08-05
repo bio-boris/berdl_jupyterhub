@@ -160,7 +160,8 @@ c.KubeSpawner.profile_list = [
 ]
 
 # Storage
-# For now, we are binding workers to kworker02. We can investigate other solutions for storage
+# For now, we are binding workers to kworker02 at ANL and prodb-compute-01 at LBL.
+# We can investigate other solutions for storage
 # These mounts below are dependent on the kworker02 node having the /mnt/state/hub/{username} and /mnt/state/hub/global_share directories
 # Mount /home/user/ from /mnt/state/hub/user for each notebook
 # This also stops us from scaling the number of notebook containers due to specifying the "cpu_guarantee" and "mem_guarantee" parameters
