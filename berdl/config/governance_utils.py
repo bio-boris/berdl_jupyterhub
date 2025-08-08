@@ -51,7 +51,7 @@ class GovernanceUtils:
             headers = {"Authorization": f"Bearer {token}"}
 
             async with httpx.AsyncClient() as client:
-                response = await client.get(f"{gov_url}/credentials", headers=headers)
+                response = await client.get(f"{gov_url}/credentials/", headers=headers)
                 response.raise_for_status()
                 credentials = response.json()
 
