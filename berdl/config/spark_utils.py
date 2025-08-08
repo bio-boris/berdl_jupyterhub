@@ -4,7 +4,7 @@ from berdl.clients.spark import cluster
 class SparkClusterManager:
     """
     A utility class with static methods to manage Spark clusters for users.
-    It retrieves the necessary authentication token from the spawner's user auth_state.
+    It retrieves the necessary authentication token from the spawner's user auth_state and sets the environment variables required for Spark.
     """
 
     def __init__(self):
@@ -12,6 +12,7 @@ class SparkClusterManager:
 
     @staticmethod
     async def _get_auth_token(spawner) -> str:
+        # TODO WE CAN MOVE THIS TO A SHARED UTILS MODULE
         """Helper method to retrieve and validate the auth token from the user's auth_state."""
         auth_state = await spawner.user.get_auth_state()
         if not auth_state:
@@ -44,6 +45,7 @@ class SparkClusterManager:
 
             else:
                 raise ValueError(f"Master URL not found in response: {response}")
+
         except Exception as e:
             spawner.log.error(
                 f"Error creating Spark cluster for user {username}: {str(e)}"

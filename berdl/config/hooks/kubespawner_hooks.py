@@ -1,6 +1,7 @@
 from berdl.config.spark_utils import SparkClusterManager
-from berdl.config.hooks.setup_extensions import setup_user_environment
+from berdl.config.governance_utils import GovernanceUtils
 from kubernetes import client
+
 
 # TODO TRY CATCH
 
@@ -8,8 +9,9 @@ from kubernetes import client
 async def pre_spawn_hook(spawner):
     """
     Hook to create a Spark cluster before the user's server starts.
+    # TODO MOVE AUTH TO A SHARED UTILS MODULE, or in a prior step in the spawner pre-spawn hooks.
     """
-    setup_user_environment(spawner.user.name)
+    await GovernanceUtils.set_governance_credentials(spawner)
     await SparkClusterManager.start_spark_cluster(spawner)
 
 
@@ -21,6 +23,7 @@ async def post_stop_hook(spawner):
 
 
 def modify_pod_hook(spawner, pod):
+
     pod.spec.containers[0].env.append(
         client.V1EnvVar(
             "BERDL_POD_IP",

@@ -4,7 +4,6 @@ import berdl.config.hooks.kubespawner_hooks
 from berdl.auth.kb_jupyterhub_auth import KBaseAuthenticator
 from berdl.config.hooks import pre_spawn_hook, post_stop_hook, modify_pod_hook
 
-
 c = get_config()
 
 # ==============================================================================
@@ -23,7 +22,6 @@ c.JupyterHub.template_vars = {
 }
 # Don't delete servers on restart!
 c.JupyterHub.cleanup_servers = False
-
 
 # ==============================================================================
 # ## Authenticator Configuration
@@ -49,11 +47,14 @@ c.KubeSpawner.extra_labels = {"app": "berdl-notebook"}
 # See https://jupyterhub-kubespawner.readthedocs.io/en/latest/templates.html for template variables
 
 
-# BERDL Specific Environment Variables
+# BERDL Specific Environment Variables available to the user's notebook
 c.KubeSpawner.environment = {
     "KBASE_ORIGIN": os.environ["KBASE_ORIGIN"],
     "SPARK_JOB_LOG_DIR_CATEGORY": "{username}",
+    "CDM_TASK_SERVICE_URL": os.environ["CDM_TASK_SERVICE_URL"],
+    "SPARK_CLUSTER_MANAGER_API_URL": os.environ["SPARK_CLUSTER_MANAGER_API_URL"],
 }
+
 # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#user-related-configurations
 c.KubeSpawner.environment.update(
     {"NB_USER": "{username}", "CHOWN_HOME": "yes", "GEN_CERT": "yes"}
@@ -87,7 +88,6 @@ c.KubeSpawner.port = 8888  # To help avoid collision with other services
 c.KubeSpawner.debug = True
 c.JupyterHub.log_level = "DEBUG"
 
-
 # --- Resource Management ---
 # Parameterize memory settings (user provides a number, code adds unit)
 mem_limit_gb = os.environ.get("JUPYTERHUB_MEM_LIMIT_GB", "4")
@@ -100,7 +100,6 @@ cpu_limit = os.environ.get("JUPYTERHUB_CPU_LIMIT", "2.0")
 cpu_guarantee = os.environ.get("JUPYTERHUB_CPU_GUARANTEE", "0.5")
 c.KubeSpawner.cpu_limit = float(cpu_limit)
 c.KubeSpawner.cpu_guarantee = float(cpu_guarantee)
-
 
 timeout = os.environ.get("JUPYTERHUB_IDLE_TIMEOUT_SECONDS", "3600")
 c.JupyterHub.services = [
@@ -116,7 +115,6 @@ c.JupyterHub.services = [
         ],
     }
 ]
-
 
 berdl_notebook_image_tag = os.environ.get(
     "BERDL_NOTEBOOK_IMAGE_TAG", "ghcr.io/bio-boris/berdl_notebook:main"
@@ -170,7 +168,6 @@ node_hostname = os.environ.get("NODE_SELECTOR_HOSTNAME", "kworker02")
 if node_hostname:
     c.KubeSpawner.node_selector = {"kubernetes.io/hostname": node_hostname}
 
-
 c.KubeSpawner.volumes = [
     {
         "name": "user-home",
@@ -197,10 +194,9 @@ c.KubeSpawner.extra_pod_config = {
     "enableServiceLinks": False,
 }
 
-
 # The default command runs 'start-notebook.sh', which passes these args along.
-
 # Hooks for pre-spawn and post-stop actions
+# These will also add environment variables to the pod, such as BERDL_POD_IP
 c.KubeSpawner.pre_spawn_hook = pre_spawn_hook
 c.KubeSpawner.post_spawn_hook = post_stop_hook
 c.KubeSpawner.modify_pod_hook = modify_pod_hook
