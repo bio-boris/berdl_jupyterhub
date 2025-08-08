@@ -198,7 +198,7 @@ c.KubeSpawner.extra_pod_config = {
 # Hooks for pre-spawn and post-stop actions
 # These will also add environment variables to the pod, such as BERDL_POD_IP
 c.KubeSpawner.pre_spawn_hook = pre_spawn_hook
-c.KubeSpawner.post_spawn_hook = post_stop_hook
+c.KubeSpawner.post_stop_hook = post_stop_hook
 c.KubeSpawner.modify_pod_hook = modify_pod_hook
 
 
