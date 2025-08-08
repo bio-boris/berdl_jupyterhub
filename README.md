@@ -34,7 +34,8 @@ The container is configured at runtime using the following environment variables
 | `SPARK_CLUSTER_MANAGER_API_URL`         | _(none)_                                | The URL for the Spark Cluster Manager API.                                       |
 | `GOVERNANCE_API_URL`                    | _(none)_                                | The URL for the Governance API.                                                  |
 | `MINIO_ENDPOINT`                      | _(none)_                                | The endpoint for the MinIO object storage service.                                |
- | `MINIO_SECURE_FLAG`                  | _(none)_`                               | Whether to use HTTPS for MinIO connections.                                      |
+| `MINIO_SECURE_FLAG`                  | _(none)_`                               | Whether to use HTTPS for MinIO connections.                                      |
+ | `CDM_TASK_SERVICE_URL`                     | _(none)_                                | The URL for the CTS service.                                                     |
 ---
 
 

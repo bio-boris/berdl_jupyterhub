@@ -200,3 +200,6 @@ c.KubeSpawner.extra_pod_config = {
 c.KubeSpawner.pre_spawn_hook = pre_spawn_hook
 c.KubeSpawner.post_spawn_hook = post_stop_hook
 c.KubeSpawner.modify_pod_hook = modify_pod_hook
+
+
+# TODO: CHECK ALL REQUIRED ENVIRONMENT VARIABLES ARE SET and raise an error if not
