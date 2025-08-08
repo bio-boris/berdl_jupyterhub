@@ -73,9 +73,9 @@ class GovernanceUtils:
         except (httpx.RequestError, RuntimeError) as e:
             # --- Graceful Failure Path (for API/auth errors ONLY) ---
             spawner.log.error(
-                "Failed to get governance credentials for user %s: %s. Notebook will start with empty credentials.",
+                "Failed to get governance credentials for user %s. Notebook will start with empty credentials.",
                 spawner.user.name,
-                e,
+                exc_info=True,  # This will print the full exception traceback.
             )
 
             spawner.environment[GovernanceUtils.MINIO_ACCESS_KEY] = ""
