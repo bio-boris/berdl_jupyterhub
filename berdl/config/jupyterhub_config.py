@@ -53,7 +53,7 @@ c.KubeSpawner.environment = {
     "SPARK_JOB_LOG_DIR_CATEGORY": "{username}",
     "CDM_TASK_SERVICE_URL": os.environ["CDM_TASK_SERVICE_URL"],
     "SPARK_CLUSTER_MANAGER_API_URL": os.environ["SPARK_CLUSTER_MANAGER_API_URL"],
-    "BERDL_HIVE_METASTORE_URI": os.environ['BERDL_HIVE_METASTORE_URI']
+    "BERDL_HIVE_METASTORE_URI": os.environ["BERDL_HIVE_METASTORE_URI"],
 }
 
 # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#user-related-configurations
