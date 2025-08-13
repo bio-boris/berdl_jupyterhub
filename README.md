@@ -33,9 +33,10 @@ The container is configured at runtime using the following environment variables
 | `BERDL_NOTEBOOK_IMAGE_TAG`              | `ghcr.io/bio-boris/berdl_notebook:pr-1` | The tag of the BERDL notebook image to use for user servers.                     |
 | `SPARK_CLUSTER_MANAGER_API_URL`         | _(none)_                                | The URL for the Spark Cluster Manager API.                                       |
 | `GOVERNANCE_API_URL`                    | _(none)_                                | The URL for the Governance API.                                                  |
-| `MINIO_ENDPOINT`                      | _(none)_                                | The endpoint for the MinIO object storage service.                                |
-| `MINIO_SECURE_FLAG`                  | _(none)_`                               | Whether to use HTTPS for MinIO connections.                                      |
- | `CDM_TASK_SERVICE_URL`                     | _(none)_                                | The URL for the CTS service.                                                     |
+| `MINIO_ENDPOINT`                        | _(none)_                                | The endpoint for the MinIO object storage service.                               |
+| `MINIO_SECURE_FLAG`                     | _(none)_`                               | Whether to use HTTPS for MinIO connections.                                      |
+| `CDM_TASK_SERVICE_URL`                  | _(none)_                                | The URL for the CTS service.                                                     |
+| `BERDL_HIVE_METASTORE_URL`              | _(none)_                                | The URL for the Hive Metastore service.                                          |
 ---
 
 
