@@ -93,13 +93,14 @@ def configure_hooks(c):
     c.KubeSpawner.post_stop_hook = post_stop_hook
     c.KubeSpawner.modify_pod_hook = modify_pod_hook
 
+    # Use the NB_USER environment variable that's already set
     c.KubeSpawner.lifecycle_hooks = {
         "postStart": {
             "exec": {
                 "command": [
                     "/bin/sh",
                     "-c",
-                    "ln -sfn /global_share /home/{username}/global_share || true",
+                    "ln -sfn /global_share /home/$NB_USER/global_share || true",
                 ]
             }
         }
