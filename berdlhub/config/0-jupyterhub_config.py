@@ -5,6 +5,7 @@ This file orchestrates loading all configuration modules.
 
 import os
 import sys
+from berdlhub.config.validators import validate_environment
 
 # Add config directory to path
 sys.path.insert(0, os.path.dirname(__file__))
@@ -13,10 +14,13 @@ sys.path.insert(0, os.path.dirname(__file__))
 c = get_config()
 
 # Validate environment variables first
-from berdlhub.config.validators import validate_environment
+
 
 c.JupyterHub.log_level = os.environ.get("JUPYTERHUB_LOG_LEVEL", "DEBUG")
+print("About to validate environment variables...")
 validate_environment()
+print("Environment variables validated successfully.")
+c.spawner.debug("Environment variables validated successfully.")
 
 # Load all configuration modules in order
 from berdlhub.config.hub import configure_hub
