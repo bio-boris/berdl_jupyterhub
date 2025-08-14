@@ -10,7 +10,7 @@ ENV HUB_DIR=/hub
 ENV BERDL_DIR=${HUB_DIR}/berdlhub
 ENV PYTHONPATH=${HUB_DIR}
 ENV JUPYTERHUB_TEMPLATES_DIR=${BERDL_DIR}/auth/templates
-ENV KBASE_ORIGIN="https://ci.kbase.us"
+
 
 # --- Build Steps ---
 WORKDIR ${HUB_DIR}

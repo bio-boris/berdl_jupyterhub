@@ -17,7 +17,3 @@ def configure_resources(c):
     cpu_guarantee = os.environ.get("JUPYTERHUB_CPU_GUARANTEE", "0.5")
     c.KubeSpawner.cpu_limit = float(cpu_limit)
     c.KubeSpawner.cpu_guarantee = float(cpu_guarantee)
-
-    # Optional: Add GPU support
-    if os.environ.get("ENABLE_GPU_SUPPORT", "false").lower() == "true":
-        c.KubeSpawner.extra_resource_limits = {"nvidia.com/gpu": "1"}

@@ -1,6 +1,6 @@
 """Authentication configuration."""
 
-from auth.kb_jupyterhub_auth import KBaseAuthenticator
+from berdlhub.auth.kb_jupyterhub_auth import KBaseAuthenticator
 
 
 def configure_auth(c):

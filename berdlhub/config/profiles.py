@@ -6,9 +6,7 @@ import os
 def configure_profiles(c):
     """Configure server profile options."""
 
-    berdl_image = os.environ.get(
-        "BERDL_NOTEBOOK_IMAGE_TAG", "ghcr.io/bio-boris/berdl_notebook:main"
-    )
+    berdl_image = os.environ["BERDL_NOTEBOOK_IMAGE_TAG"]
 
     c.KubeSpawner.profile_list = [
         {
