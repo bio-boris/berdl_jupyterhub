@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y git
 # --- Environment Configuration ---
 # Define variables for all key paths
 ENV HUB_DIR=/hub
-ENV BERDL_DIR=${HUB_DIR}/berdl
+ENV BERDL_DIR=${HUB_DIR}/berdlhub
 ENV PYTHONPATH=${HUB_DIR}
 ENV JUPYTERHUB_TEMPLATES_DIR=${BERDL_DIR}/auth/templates
 ENV KBASE_ORIGIN="https://ci.kbase.us"
