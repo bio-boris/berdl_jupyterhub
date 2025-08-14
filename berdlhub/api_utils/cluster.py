@@ -17,7 +17,7 @@ from spark_manager_client.models import (
 from spark_manager_client.types import Response
 
 # So this is not part of the client, but it depends on outside code
-from berdl.auth.arg_checkers import not_falsy
+from berdlhub.auth.arg_checkers import not_falsy
 
 DEFAULT_WORKER_COUNT = int(os.environ.get("DEFAULT_WORKER_COUNT", 2))
 DEFAULT_WORKER_CORES = int(os.environ.get("DEFAULT_WORKER_CORES", 1))

@@ -1,4 +1,4 @@
-from berdl.clients.spark import cluster
+from berdlhub.api_utils import cluster
 
 
 class SparkClusterManager:

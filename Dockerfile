@@ -17,7 +17,7 @@ WORKDIR ${HUB_DIR}
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY ./berdl/ ${BERDL_DIR}/
-
+COPY ./berdlhub/ ${BERDL_DIR}/
 
 
 # This default directory must be mounted in order to preserve the sqlite and pid files

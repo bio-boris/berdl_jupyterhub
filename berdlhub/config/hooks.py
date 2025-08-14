@@ -1,7 +1,6 @@
-from berdl.config.spark_utils import SparkClusterManager
-from berdl.config.governance_utils import GovernanceUtils
 from kubernetes import client
-
+from berdlhub.api_utils.governance_utils import GovernanceUtils
+from berdlhub.api_utils.spark_utils import SparkClusterManager
 
 async def pre_spawn_hook(spawner):
     """
@@ -84,4 +83,24 @@ def modify_pod_hook(spawner, pod):
             ),
         )
     )
+
+
     return pod
+
+
+def configure_hooks(c):
+    c.KubeSpawner.pre_spawn_hook = pre_spawn_hook
+    c.KubeSpawner.post_stop_hook = post_stop_hook
+    c.KubeSpawner.modify_pod_hook = modify_pod_hook
+
+    c.KubeSpawner.lifecycle_hooks = {
+        "postStart": {
+            "exec": {
+                "command": [
+                    "/bin/sh",
+                    "-c",
+                    "ln -sfn /global_share /home/{username}/global_share || true",
+                ]
+            }
+        }
+    }
