@@ -1,6 +1,9 @@
 """Debug configuration - should be disabled in production."""
 
+import logging
 import os
+
+logger = logging.getLogger(__name__)
 
 
 def configure_debug(c):
@@ -11,15 +14,8 @@ def configure_debug(c):
     if debug_enabled:
         c.KubeSpawner.debug = True
         c.JupyterHub.log_level = "DEBUG"
-
-        # Extra debug settings
         c.KubeSpawner.events_enabled = True
         c.JupyterHub.log_datefmt = "%Y-%m-%d %H:%M:%S"
-
-        # Log all spawner events
-        import logging
-
-        logging.basicConfig(level=logging.DEBUG)
     else:
         c.KubeSpawner.debug = False
         c.JupyterHub.log_level = os.environ.get("JUPYTERHUB_LOG_LEVEL", "INFO")
