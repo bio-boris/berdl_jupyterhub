@@ -1,11 +1,8 @@
 import os
-
-import berdl.config.hooks.kubespawner_hooks
 from berdl.auth.kb_jupyterhub_auth import KBaseAuthenticator
 from berdl.config.hooks import pre_spawn_hook, post_stop_hook, modify_pod_hook
 
 c = get_config()
-
 # ==============================================================================
 # ## Hub Configuration
 # General settings for the JupyterHub application itself.
@@ -41,10 +38,10 @@ c.KubeSpawner.image_pull_policy = "Always"
 
 # --- Pod Definition ---
 # Defines the contents and metadata of the user's pod.
-# c.KubeSpawner.image = os.environ.get('JUPYTERHUB_USER_IMAGE', 'ghcr.io/bio-boris/berdl_notebook:main')
 c.KubeSpawner.extra_labels = {"app": "berdl-notebook"}
-# Add NBUSER environment variable to the pod
-# See https://jupyterhub-kubespawner.readthedocs.io/en/latest/templates.html for template variables
+c.KubeSpawner.extra_pod_config = {
+    "enableServiceLinks": False,
+}
 
 
 # BERDL Specific Environment Variables available to the user's notebook
@@ -54,8 +51,10 @@ c.KubeSpawner.environment = {
     "CDM_TASK_SERVICE_URL": os.environ["CDM_TASK_SERVICE_URL"],
     "SPARK_CLUSTER_MANAGER_API_URL": os.environ["SPARK_CLUSTER_MANAGER_API_URL"],
     "BERDL_HIVE_METASTORE_URI": os.environ["BERDL_HIVE_METASTORE_URI"],
+    "PIP_USER": "1",  # Force user installs with pip
 }
-
+# Add NBUSER environment variable to the pod
+# See https://jupyterhub-kubespawner.readthedocs.io/en/latest/templates.html for template variables
 # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html#user-related-configurations
 c.KubeSpawner.environment.update(
     {"NB_USER": "{username}", "CHOWN_HOME": "yes", "GEN_CERT": "yes"}
@@ -69,14 +68,6 @@ c.KubeSpawner.args = [
     "--ServerApp.default_url=/lab",  # Uncomment to set default URL to JupyterLab
 ]
 
-# TODO, add post start hook to inject minio credentials into the pod
-
-
-# --- Lifecycle and Culling ---
-# Manages how pods start, stop, and are culled when idle.
-c.KubeSpawner.start_timeout = 300  # 5 minutes
-c.KubeSpawner.http_timeout = 120  # 2 minutes
-c.KubeSpawner.delete_stopped_pods = True
 
 # --- Kubernetes Specifics ---
 # Networking and scheduling settings for Kubernetes.
@@ -86,8 +77,9 @@ c.KubeSpawner.port = 8888  # To help avoid collision with other services
 
 
 # Debugging
-c.KubeSpawner.debug = True
-c.JupyterHub.log_level = "DEBUG"
+debug_mode = os.environ.get("JUPYTERHUB_DEBUG", "true").lower() == "true"
+c.KubeSpawner.debug = debug_mode
+c.JupyterHub.log_level = "DEBUG" if debug_mode else "INFO"
 
 # --- Resource Management ---
 # Parameterize memory settings (user provides a number, code adds unit)
@@ -102,6 +94,12 @@ cpu_guarantee = os.environ.get("JUPYTERHUB_CPU_GUARANTEE", "0.5")
 c.KubeSpawner.cpu_limit = float(cpu_limit)
 c.KubeSpawner.cpu_guarantee = float(cpu_guarantee)
 
+
+# --- Lifecycle and Culling ---
+# Manages how pods start, stop, and are culled when idle.
+c.KubeSpawner.start_timeout = 300  # 5 minutes
+c.KubeSpawner.http_timeout = 120  # 2 minutes
+c.KubeSpawner.delete_stopped_pods = True
 timeout = os.environ.get("JUPYTERHUB_IDLE_TIMEOUT_SECONDS", "3600")
 c.JupyterHub.services = [
     {
@@ -117,11 +115,11 @@ c.JupyterHub.services = [
     }
 ]
 
+
+# --- User-Selectable Profiles ---
 berdl_notebook_image_tag = os.environ.get(
     "BERDL_NOTEBOOK_IMAGE_TAG", "ghcr.io/bio-boris/berdl_notebook:main"
 )
-
-# --- User-Selectable Profiles ---
 c.KubeSpawner.profile_list = [
     {
         "display_name": "Small Server (2G RAM, 1 CPU)",
@@ -186,14 +184,7 @@ c.KubeSpawner.volume_mounts = [
     {"name": "user-home", "mountPath": "/home/{username}"},
     {"name": "user-global", "mountPath": "/global_share"},
 ]
-# Set permissions on the volume mounts
-# c.KubeSpawner.
 
-# Add extra options for the pod template to disable "enableServiceLinks"
-# TODO ADD POD IP
-c.KubeSpawner.extra_pod_config = {
-    "enableServiceLinks": False,
-}
 
 # The default command runs 'start-notebook.sh', which passes these args along.
 # Hooks for pre-spawn and post-stop actions
@@ -201,6 +192,5 @@ c.KubeSpawner.extra_pod_config = {
 c.KubeSpawner.pre_spawn_hook = pre_spawn_hook
 c.KubeSpawner.post_stop_hook = post_stop_hook
 c.KubeSpawner.modify_pod_hook = modify_pod_hook
-
 
 # TODO: CHECK ALL REQUIRED ENVIRONMENT VARIABLES ARE SET and raise an error if not
