@@ -15,6 +15,7 @@ c = get_config()
 
 # Validate environment variables first
 
+validate_environment(c)
 
 # Load all configuration modules in order
 from berdlhub.config.hub import configure_hub
