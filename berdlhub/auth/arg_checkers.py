@@ -3,7 +3,7 @@
 import unicodedata
 from typing import Optional, TypeVar
 
-from berdl.auth.errors import IllegalParameterError, MissingParameterError
+from berdlhub.auth.errors import IllegalParameterError, MissingParameterError
 
 T = TypeVar("T")
 

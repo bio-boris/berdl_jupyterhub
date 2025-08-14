@@ -17,7 +17,7 @@ from spark_manager_client.models import (
 from spark_manager_client.types import Response
 
 # So this is not part of the client, but it depends on outside code
-from berdl.auth.arg_checkers import not_falsy
+from berdlhub.auth.arg_checkers import not_falsy
 
 DEFAULT_WORKER_COUNT = int(os.environ.get("DEFAULT_WORKER_COUNT", 2))
 DEFAULT_WORKER_CORES = int(os.environ.get("DEFAULT_WORKER_CORES", 1))
@@ -67,18 +67,17 @@ def create_cluster(
     worker_memory: str = DEFAULT_WORKER_MEMORY,
     master_cores: int = DEFAULT_MASTER_CORES,
     master_memory: str = DEFAULT_MASTER_MEMORY,
-    force: bool = False,
 ) -> SparkClusterCreateResponse | None:
     """
     Create a new Spark cluster with the given configuration.
 
     Args:
+        kbase_auth_token:
         worker_count: Number of worker nodes
         worker_cores: CPU cores per worker
         worker_memory: Memory per worker (e.g., "10GiB")
         master_cores: CPU cores for master
         master_memory: Memory for master (e.g., "10GiB")
-        force: Skip confirmation prompt if True
     """
 
     client = _get_authenticated_client(kbase_auth_token)

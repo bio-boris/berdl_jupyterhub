@@ -12,8 +12,8 @@ from typing import NamedTuple, List
 import aiohttp
 from tornado import web
 
-from berdl.auth.arg_checkers import not_falsy as _not_falsy
-from berdl.auth.kb_user import UserID
+from berdlhub.auth.arg_checkers import not_falsy as _not_falsy
+from berdlhub.auth.kb_user import UserID
 
 
 class AdminPermission(IntEnum):

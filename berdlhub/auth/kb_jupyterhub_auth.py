@@ -2,9 +2,9 @@ import logging
 import os
 
 from jupyterhub.auth import Authenticator
-from traitlets import Unicode, List
+from traitlets import List
 
-from berdl.auth.kb_auth import KBaseAuth, MissingTokenError, AdminPermission
+from berdlhub.auth.kb_auth import KBaseAuth, MissingTokenError, AdminPermission
 
 logger = logging.getLogger(__name__)
 
