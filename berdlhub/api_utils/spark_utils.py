@@ -35,7 +35,7 @@ class SparkClusterManager:
         try:
             spawner.log.info(f"Creating Spark cluster for user {username}")
             response = cluster.create_cluster(
-                kbase_auth_token=kb_auth_token, force=True
+                kbase_auth_token=kb_auth_token,
             )
 
             master_url = getattr(response, "master_url", None)
