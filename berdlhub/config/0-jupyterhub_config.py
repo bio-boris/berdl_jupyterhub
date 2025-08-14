@@ -16,11 +16,6 @@ c = get_config()
 # Validate environment variables first
 
 
-c.JupyterHub.log_level = os.environ.get("JUPYTERHUB_LOG_LEVEL", "DEBUG")
-print("About to validate environment variables...")
-validate_environment()
-print("Environment variables validated successfully.")
-c.spawner.debug("Environment variables validated successfully.")
 
 # Load all configuration modules in order
 from berdlhub.config.hub import configure_hub
