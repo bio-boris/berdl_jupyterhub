@@ -22,7 +22,6 @@ def validate_environment():
             "BERDL_HIVE_METASTORE_URI": "Hive metastore URI",
             "BERDL_NOTEBOOK_IMAGE_TAG": "BERDL notebook Docker image tag",
         },
-
     }
 
     optional_vars = {
@@ -48,7 +47,7 @@ def validate_environment():
         },
         "MinIO Settings": {
             "MINIO_SECURE_FLAG": "Flag indicating if MinIO uses HTTPS to inject into the users env. Defaults to True",
-        }
+        },
     }
 
     # Check required variables
