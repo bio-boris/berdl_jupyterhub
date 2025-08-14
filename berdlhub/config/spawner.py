@@ -30,7 +30,7 @@ def configure_spawner(c):
     c.KubeSpawner.notebook_dir = "/home/{username}"
     c.KubeSpawner.cmd = ["start-notebook.sh"]
     c.KubeSpawner.args = [
-        "--ServerApp.root_dir=/home/{username}",
+        "--ServerApp.root_dir=/home/$NB_USER",
         "--ServerApp.default_url=/lab",
     ]
 
