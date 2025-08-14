@@ -6,7 +6,9 @@ import logging
 
 # Log all spawner events
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 def validate_environment():
     """Validate that all required environment variables are set."""
@@ -54,8 +56,8 @@ def validate_environment():
         logging.error("\n".join(missing), file=sys.stderr)
         sys.exit(1)
 
-    logging.info("Environment validation successful!")
-    logging.info("\nOptional variables status:")
+    logging.warning("Environment validation successful!")
+    logging.warning("\nOptional variables status:")
     for var, description in optional_vars.items():
         status = "✓ Set" if var in os.environ else "✗ Not set"
-        logging.info(f"  {status}: {var} ({description})")
+        logging.warning(f"  {status}: {var} ({description})")
