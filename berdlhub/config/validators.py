@@ -4,9 +4,6 @@ import os
 import sys
 import logging
 
-# Log all spawner events
-import logging
-
 logger = logging.getLogger(__name__)
 
 
@@ -52,8 +49,8 @@ def validate_environment():
             missing.append(f"  - {var}: {description}")
 
     if missing:
-        logging.error("ERROR: Missing required environment variables:", file=sys.stderr)
-        logging.error("\n".join(missing), file=sys.stderr)
+        logging.error("ERROR: Missing required environment variables:")
+        logging.error("\n".join(missing))
         sys.exit(1)
 
     logging.warning("Environment validation successful!")
