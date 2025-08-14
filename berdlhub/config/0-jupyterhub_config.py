@@ -13,8 +13,9 @@ sys.path.insert(0, os.path.dirname(__file__))
 c = get_config()
 
 # Validate environment variables first
-from validators import validate_environment
+from berdlhub.config.validators import validate_environment
 
+c.JupyterHub.log_level = os.environ.get("JUPYTERHUB_LOG_LEVEL", "DEBUG")
 validate_environment()
 
 # Load all configuration modules in order

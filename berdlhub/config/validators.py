@@ -21,6 +21,7 @@ def validate_environment():
             "SPARK_CLUSTER_MANAGER_API_URL": "Spark cluster manager API",
             "BERDL_HIVE_METASTORE_URI": "Hive metastore URI",
             "BERDL_NOTEBOOK_IMAGE_TAG": "BERDL notebook Docker image tag",
+            "JUPYTERHUB_DEBUG": "Enable debug mode",
         },
     }
 
@@ -29,7 +30,6 @@ def validate_environment():
             "NODE_SELECTOR_HOSTNAME": "Kubernetes node hostname",
         },
         "JupyterHub Settings": {
-            "JUPYTERHUB_DEBUG": "Enable debug mode",
             "JUPYTERHUB_LOG_LEVEL": "Set JupyterHub log level. Default is INFO",
             "ENABLE_IDLE_CULLER": "Enable idle culler for JupyterHub. Defaults to True",
             "JUPYTERHUB_IDLE_TIMEOUT_SECONDS": "Idle timeout in seconds for JupyterHub users. Defaults to 3600 seconds (1 hour)",

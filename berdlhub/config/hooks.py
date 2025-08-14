@@ -9,7 +9,7 @@ async def pre_spawn_hook(spawner):
     # TODO MOVE AUTH TO A SHARED UTILS MODULE, or in a prior step in the spawner pre-spawn hooks.
     # TODO TRY CATCH?
     """
-    spawner.log.info("Pre-spawn hook called for user %s", spawner.user.name)
+    spawner.log.debug("Pre-spawn hook called for user %s", spawner.user.name)
     await GovernanceUtils.set_governance_credentials(spawner)
     await SparkClusterManager.start_spark_cluster(spawner)
 
@@ -18,7 +18,7 @@ async def post_stop_hook(spawner):
     """
     Hook to delete the Spark cluster after the user's server stops.
     """
-    spawner.log.info("Post-stop hook called for user %s", spawner.user.name)
+    spawner.log.debug("Post-stop hook called for user %s", spawner.user.name)
     await SparkClusterManager.stop_spark_cluster(spawner)
 
 

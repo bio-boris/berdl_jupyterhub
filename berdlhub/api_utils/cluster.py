@@ -67,18 +67,17 @@ def create_cluster(
     worker_memory: str = DEFAULT_WORKER_MEMORY,
     master_cores: int = DEFAULT_MASTER_CORES,
     master_memory: str = DEFAULT_MASTER_MEMORY,
-    force: bool = False,
 ) -> SparkClusterCreateResponse | None:
     """
     Create a new Spark cluster with the given configuration.
 
     Args:
+        kbase_auth_token:
         worker_count: Number of worker nodes
         worker_cores: CPU cores per worker
         worker_memory: Memory per worker (e.g., "10GiB")
         master_cores: CPU cores for master
         master_memory: Memory for master (e.g., "10GiB")
-        force: Skip confirmation prompt if True
     """
 
     client = _get_authenticated_client(kbase_auth_token)
