@@ -22,4 +22,4 @@ COPY ./berdlhub/ ${BERDL_DIR}/
 # This default directory must be mounted in order to preserve the sqlite and pid files
 WORKDIR /srv/jupyterhub
 ENTRYPOINT ["jupyterhub"]
-CMD ["-f", "/hub/berdlhub/config/jupyterhub_config.py"]
+CMD ["-f", "/hub/berdlhub/config/0-jupyterhub_config.py"]

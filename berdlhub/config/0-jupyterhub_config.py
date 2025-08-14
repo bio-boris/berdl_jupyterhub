@@ -43,4 +43,3 @@ configure_hooks(c)
 
 # Apply debug last (can override other settings)
 configure_debug(c)
-

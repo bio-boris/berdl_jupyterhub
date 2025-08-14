@@ -2,6 +2,7 @@ from kubernetes import client
 from berdlhub.api_utils.governance_utils import GovernanceUtils
 from berdlhub.api_utils.spark_utils import SparkClusterManager
 
+
 async def pre_spawn_hook(spawner):
     """
     Hook to create a Spark cluster before the user's server starts.
@@ -83,7 +84,6 @@ def modify_pod_hook(spawner, pod):
             ),
         )
     )
-
 
     return pod
 
