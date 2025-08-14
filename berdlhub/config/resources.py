@@ -5,6 +5,7 @@ import os
 
 def configure_resources(c):
     """Configure default resource limits and guarantees."""
+    # TODO WE MIGHT BE ABLE TO DELETE THIS DUE TO OVERRIDES
 
     # Memory settings
     mem_limit_gb = os.environ.get("JUPYTERHUB_MEM_LIMIT_GB", "4")

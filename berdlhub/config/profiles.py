@@ -18,7 +18,7 @@ def configure_profiles(c):
                 "mem_guarantee": "1G",
                 "cpu_limit": 1,
                 "cpu_guarantee": 0.5,
-                "image": "jupyter/base-notebook:latest",
+                "image": berdl_image,
             },
         },
         {
@@ -29,7 +29,7 @@ def configure_profiles(c):
                 "mem_guarantee": "4G",
                 "cpu_limit": 2,
                 "cpu_guarantee": 1,
-                "image": "quay.io/jupyter/pyspark-notebook:spark-4.0.0",
+                "image": berdl_image,
             },
         },
         {

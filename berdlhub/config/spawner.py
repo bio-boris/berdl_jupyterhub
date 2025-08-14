@@ -29,10 +29,10 @@ def configure_spawner(c):
     # Notebook settings
     c.KubeSpawner.notebook_dir = "/home/{username}"
     c.KubeSpawner.cmd = ["start-notebook.sh"]
-    c.KubeSpawner.args = [
-        "--ServerApp.root_dir=/",
-        "--ServerApp.default_url=/lab",
-    ]
+    # c.KubeSpawner.args = [
+    #     "--ServerApp.root_dir=/",
+    #     "--ServerApp.default_url=/lab",
+    # ]
 
     # Node selection (if specified)
     node_hostname = os.environ.get("NODE_SELECTOR_HOSTNAME")
