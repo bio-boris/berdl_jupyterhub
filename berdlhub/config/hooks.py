@@ -26,8 +26,8 @@ async def pre_spawn_hook(spawner):
     """
     spawner.log.debug("Pre-spawn hook called for user %s", spawner.user.name)
     kb_auth_token = await _get_auth_token(spawner)
-    await GovernanceUtils.set_governance_credentials(spawner, kb_auth_token)
-    await SparkClusterManager.start_spark_cluster(spawner, kb_auth_token)
+    await GovernanceUtils(kb_auth_token).set_governance_credentials(spawner)
+    await SparkClusterManager(kb_auth_token).start_spark_cluster(spawner)
 
 
 async def post_stop_hook(spawner):
