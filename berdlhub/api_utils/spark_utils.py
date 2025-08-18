@@ -6,7 +6,6 @@ import logging
 import os
 from dataclasses import dataclass
 from typing import Optional, Any
-
 from spark_manager_client import AuthenticatedClient
 from spark_manager_client.api.clusters import (
     create_cluster_clusters_post,
