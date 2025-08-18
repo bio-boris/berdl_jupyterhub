@@ -18,24 +18,6 @@ from spark_manager_client.models import (
 from spark_manager_client.types import Response
 
 
-def _raise_api_error(response: Response) -> None:
-    """
-    Process the API error response and raise an error.
-
-    Args:
-        response: API response object
-
-    Raises:
-        ValueError: With API error details
-    """
-    error_message = f"API Error (HTTP {response.status_code})"
-
-    if hasattr(response, "content") and response.content:
-        error_message += f": {response.content}"
-
-    raise ValueError(error_message)
-
-
 class SparkClusterManager:
     """
     A unified class to manage Spark clusters for users.
@@ -120,9 +102,7 @@ class SparkClusterManager:
         else:
             _raise_api_error(response)
 
-    def delete_cluster(
-        self
-    ) -> Optional[ClusterDeleteResponse]:
+    def delete_cluster(self) -> Optional[ClusterDeleteResponse]:
         """
         Delete the Spark cluster for the user.
 
@@ -135,16 +115,6 @@ class SparkClusterManager:
         Raises:
             ValueError: If API call fails
         """
-        with self.client as client:
-            response: Response[ClusterDeleteResponse] = (
-                delete_cluster_clusters_delete.sync_detailed(client=client)
-            )
-
-        if response.status_code in (200, 204) and response.parsed:
-            print("Spark cluster deleted successfully.")
-            return response.parsed
-
-        _raise_api_error(response)
 
     async def start_spark_cluster(
         self,
@@ -165,7 +135,6 @@ class SparkClusterManager:
         try:
             spawner.log.info(f"Creating Spark cluster for user {username}")
             response = self.create_cluster()
-
             master_url = getattr(response, "master_url", None)
             if master_url:
                 spawner.log.info(f"Spark cluster created with master URL: {master_url}")
@@ -190,7 +159,13 @@ class SparkClusterManager:
         username = spawner.user.name
         try:
             spawner.log.info(f"Deleting Spark cluster for user {username}")
-            self.delete_cluster()
+            with self.client as client:
+                response: Response[ClusterDeleteResponse] = (
+                    delete_cluster_clusters_delete.sync_detailed(client=client)
+                )
+            if response.status_code in (200, 204) and response.parsed:
+                print("Spark cluster deleted successfully.")
+
             spawner.log.info(f"Spark cluster deleted for user {username}")
         except Exception as e:
             spawner.log.error(
