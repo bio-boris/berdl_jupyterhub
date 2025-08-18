@@ -1,6 +1,5 @@
 """Storage configuration for user pods."""
 
-import os
 import logging
 
 logger = logging.getLogger(__name__)

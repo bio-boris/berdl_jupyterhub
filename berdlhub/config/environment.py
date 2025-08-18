@@ -22,6 +22,4 @@ def configure_environment(c):
 
     # Jupyter Docker Stacks configuration
     # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html
-    c.KubeSpawner.environment.update(
-        {"NB_USER": "{username}", "CHOWN_HOME": "yes", "GEN_CERT": "yes"}
-    )
+    c.KubeSpawner.environment.update({"NB_USER": "{username}", "CHOWN_HOME": "yes", "GEN_CERT": "yes"})

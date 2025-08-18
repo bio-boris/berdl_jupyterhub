@@ -39,65 +39,46 @@ async def post_stop_hook(spawner):
 
 
 def modify_pod_hook(spawner, pod):
-
     pod.spec.containers[0].env.append(
         client.V1EnvVar(
             "BERDL_POD_IP",
             None,
-            client.V1EnvVarSource(
-                field_ref=client.V1ObjectFieldSelector(field_path="status.podIP")
-            ),
+            client.V1EnvVarSource(field_ref=client.V1ObjectFieldSelector(field_path="status.podIP")),
         )
     )
     pod.spec.containers[0].env.append(
         client.V1EnvVar(
             "BERDL_POD_NAME",
             None,
-            client.V1EnvVarSource(
-                field_ref=client.V1ObjectFieldSelector(field_path="metadata.name")
-            ),
+            client.V1EnvVarSource(field_ref=client.V1ObjectFieldSelector(field_path="metadata.name")),
         )
     )
     pod.spec.containers[0].env.append(
         client.V1EnvVar(
             "BERDL_CPU_REQUEST",
             None,
-            client.V1EnvVarSource(
-                resource_field_ref=client.V1ResourceFieldSelector(
-                    resource="requests.cpu"
-                )
-            ),
+            client.V1EnvVarSource(resource_field_ref=client.V1ResourceFieldSelector(resource="requests.cpu")),
         )
     )
     pod.spec.containers[0].env.append(
         client.V1EnvVar(
             "BERDL_CPU_LIMIT",
             None,
-            client.V1EnvVarSource(
-                resource_field_ref=client.V1ResourceFieldSelector(resource="limits.cpu")
-            ),
+            client.V1EnvVarSource(resource_field_ref=client.V1ResourceFieldSelector(resource="limits.cpu")),
         )
     )
     pod.spec.containers[0].env.append(
         client.V1EnvVar(
             "BERDL_MEMORY_REQUEST",
             None,
-            client.V1EnvVarSource(
-                resource_field_ref=client.V1ResourceFieldSelector(
-                    resource="requests.memory"
-                )
-            ),
+            client.V1EnvVarSource(resource_field_ref=client.V1ResourceFieldSelector(resource="requests.memory")),
         )
     )
     pod.spec.containers[0].env.append(
         client.V1EnvVar(
             "BERDL_MEMORY_LIMIT",
             None,
-            client.V1EnvVarSource(
-                resource_field_ref=client.V1ResourceFieldSelector(
-                    resource="limits.memory"
-                )
-            ),
+            client.V1EnvVarSource(resource_field_ref=client.V1ResourceFieldSelector(resource="limits.memory")),
         )
     )
 

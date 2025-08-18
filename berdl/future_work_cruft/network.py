@@ -14,6 +14,4 @@ def configure_network(c):
     for profile in c.KubeSpawner.profile_list:
         if "Large Server" in profile["display_name"]:
             # Data science profile might need more access
-            profile["kubespawner_override"]["extra_labels"] = {
-                "network-policy": "data-science"
-            }
+            profile["kubespawner_override"]["extra_labels"] = {"network-policy": "data-science"}

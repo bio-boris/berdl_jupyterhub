@@ -1,4 +1,4 @@
-""" User oriented classes and functions. """
+"""User oriented classes and functions."""
 
 # Copied from https://github.com/kbase/collections
 

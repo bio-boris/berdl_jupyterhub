@@ -22,16 +22,10 @@ class KBaseAuthenticator(Authenticator):
     SESSION_COOKIE_NAME = "kbase_session"
     SESSION_COOKIE_BACKUP = "kbase_session_backup"
 
-    kbase_auth_url = os.environ.get(
-        "KBASE_AUTH_URL", "https://ci.kbase.us/services/auth"
-    )
+    kbase_auth_url = os.environ.get("KBASE_AUTH_URL", "https://ci.kbase.us/services/auth")
 
     auth_full_admin_roles = List(
-        default_value=[
-            role.strip()
-            for role in os.getenv("AUTH_FULL_ADMIN_ROLES", "").split(",")
-            if role.strip()
-        ],
+        default_value=[role.strip() for role in os.getenv("AUTH_FULL_ADMIN_ROLES", "").split(",") if role.strip()],
         config=True,
         help="Comma-separated list of KBase roles with full administrative access to JupyterHub.",
     )

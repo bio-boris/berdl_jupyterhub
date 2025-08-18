@@ -34,9 +34,7 @@ class GovernanceUtils:
             )
             spawner.environment.pop("MINIO_CONFIG_ERROR", None)
 
-            spawner.log.info(
-                "Successfully set MinIO credentials for user %s.", spawner.user.name
-            )
+            spawner.log.info("Successfully set MinIO credentials for user %s.", spawner.user.name)
 
         except Exception as e:
             # Graceful failure - set empty credentials with an error message

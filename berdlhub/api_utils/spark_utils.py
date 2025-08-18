@@ -113,16 +113,10 @@ class SparkClusterManager:
             SparkClusterConfig: Configuration object for cluster creation
         """
         return SparkClusterConfig(
-            worker_count=(
-                worker_count if worker_count is not None else self.defaults.worker_count
-            ),
-            worker_cores=(
-                worker_cores if worker_cores is not None else self.defaults.worker_cores
-            ),
+            worker_count=(worker_count if worker_count is not None else self.defaults.worker_count),
+            worker_cores=(worker_cores if worker_cores is not None else self.defaults.worker_cores),
             worker_memory=worker_memory or self.defaults.worker_memory,
-            master_cores=(
-                master_cores if master_cores is not None else self.defaults.master_cores
-            ),
+            master_cores=(master_cores if master_cores is not None else self.defaults.master_cores),
             master_memory=master_memory or self.defaults.master_memory,
         )
 
@@ -150,27 +144,19 @@ class SparkClusterManager:
         Raises:
             SparkClusterError: If cluster creation fails
         """
-        config = self._build_cluster_config(
-            worker_count, worker_cores, worker_memory, master_cores, master_memory
-        )
+        config = self._build_cluster_config(worker_count, worker_cores, worker_memory, master_cores, master_memory)
 
         async with self.client as client:
-            response: Response[SparkClusterCreateResponse] = (
-                await create_cluster_clusters_post.asyncio_detailed(
-                    client=client, body=config
-                )
-            )
+            response: Response[SparkClusterCreateResponse] = await create_cluster_clusters_post.asyncio_detailed(client=client, body=config)
 
         if response.status_code == 201 and response.parsed:
-            self.logger.info(f"Spark cluster created successfully")
+            self.logger.info("Spark cluster created successfully")
             self.logger.info(f"Master URL: {response.parsed.master_url}")
             return response.parsed
 
         await self._raise_api_error(response, "Cluster creation")
 
-    async def stop_spark_cluster(
-        self, spawner: Optional[Any] = None
-    ) -> Optional[ClusterDeleteResponse]:
+    async def stop_spark_cluster(self, spawner: Optional[Any] = None) -> Optional[ClusterDeleteResponse]:
         """
         Stop/delete the Spark cluster for the authenticated user.
 
@@ -195,9 +181,7 @@ class SparkClusterManager:
             self.logger.info(f"Deleting Spark cluster for user {username}")
 
             async with self.client as client:
-                response: Response[ClusterDeleteResponse] = (
-                    await delete_cluster_clusters_delete.asyncio_detailed(client=client)
-                )
+                response: Response[ClusterDeleteResponse] = await delete_cluster_clusters_delete.asyncio_detailed(client=client)
 
             if response.status_code in (200, 204):
                 self.logger.info(f"Spark cluster deleted successfully for {username}")
@@ -210,9 +194,7 @@ class SparkClusterManager:
 
             if spawner:
                 # Log error but don't raise when called from spawner
-                self.logger.error(
-                    f"Error deleting Spark cluster for user {username}: {error_message}"
-                )
+                self.logger.error(f"Error deleting Spark cluster for user {username}: {error_message}")
             else:
                 # Raise error when called directly
                 await self._raise_api_error(response, "Cluster deletion")
@@ -220,9 +202,7 @@ class SparkClusterManager:
         except Exception as e:
             if spawner:
                 # Log error but don't raise when called from spawner
-                self.logger.error(
-                    f"Error deleting Spark cluster for user {username}: {str(e)}"
-                )
+                self.logger.error(f"Error deleting Spark cluster for user {username}: {str(e)}")
             else:
                 # Re-raise when called directly
                 raise
@@ -254,7 +234,5 @@ class SparkClusterManager:
             return master_url
 
         except Exception as e:
-            self.logger.error(
-                f"Error creating Spark cluster for user {username}: {str(e)}"
-            )
+            self.logger.error(f"Error creating Spark cluster for user {username}: {str(e)}")
             raise

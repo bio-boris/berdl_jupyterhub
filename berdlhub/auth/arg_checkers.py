@@ -53,9 +53,7 @@ def _no_control_characters(string: str, name: str) -> str:
     return string
 
 
-def check_string(
-    string: Optional[str], name: str, max_len: int = None, optional: bool = False
-) -> Optional[str]:
+def check_string(string: Optional[str], name: str, max_len: int = None, optional: bool = False) -> Optional[str]:
     """
     Check that a string meets a set of criteria:
     - it is not None or whitespace only (unless the optional parameter is specified)
@@ -80,7 +78,5 @@ def check_string(
     string = string.strip()
     _no_control_characters(string, name)
     if max_len and len(string) > max_len:
-        raise IllegalParameterError(
-            "{} exceeds maximum length of {}".format(name, max_len)
-        )
+        raise IllegalParameterError("{} exceeds maximum length of {}".format(name, max_len))
     return string
