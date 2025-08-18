@@ -61,12 +61,11 @@ The container is configured at runtime using the following environment variables
 **Note**: All required variables **must be set at runtime**. Optional variables will use their default values if not provided.
 
 # User Guide
-# TODO Move to the notebook image repo
--- Users must install with pip install --user to preserve
 
 # Future Work and Known Issues
 
 ---
+* Move userguide to readthedocs
 * Consider backing up the sqlite database
 * Considerate Separate configurable-http-proxy Proxy
 * Test Environment setup
