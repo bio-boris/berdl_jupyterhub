@@ -7,8 +7,16 @@ class GovernanceUtils:
     A utility class to manage MinIO credentials for a JupyterHub spawner.
     """
 
-    @staticmethod
-    async def set_governance_credentials(spawner, kbase_auth_token) -> None:
+    def __init__(self, kbase_auth_token: str):
+        """
+        Initialize the GovernanceUtils with a KBase authentication token.
+
+        Args:
+            kbase_auth_token (str): The KBase authentication token for the user.
+        """
+        self.kbase_auth_token = kbase_auth_token
+
+    async def set_governance_credentials(self, spawner) -> None:
         """Main method to fetch credentials and update the spawner's environment."""
         try:
             # Get config from environment
@@ -17,7 +25,7 @@ class GovernanceUtils:
             minio_secure = os.environ.get("MINIO_SECURE_FLAG", "True")
 
             # Fetch credentials
-            headers = {"Authorization": f"Bearer {kbase_auth_token}"}
+            headers = {"Authorization": f"Bearer {self.kbase_auth_token}"}
             async with httpx.AsyncClient() as client:
                 response = await client.get(f"{gov_url}/credentials/", headers=headers)
                 response.raise_for_status()
