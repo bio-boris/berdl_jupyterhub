@@ -147,7 +147,9 @@ class SparkClusterManager:
         config = self._build_cluster_config(worker_count, worker_cores, worker_memory, master_cores, master_memory)
 
         async with self.client as client:
-            response: Response[SparkClusterCreateResponse] = await create_cluster_clusters_post.asyncio_detailed(client=client, body=config)
+            response: Response[SparkClusterCreateResponse] = await create_cluster_clusters_post.asyncio_detailed(
+                client=client, body=config
+            )
 
         if response.status_code == 201 and response.parsed:
             self.logger.info("Spark cluster created successfully")
@@ -181,7 +183,9 @@ class SparkClusterManager:
             self.logger.info(f"Deleting Spark cluster for user {username}")
 
             async with self.client as client:
-                response: Response[ClusterDeleteResponse] = await delete_cluster_clusters_delete.asyncio_detailed(client=client)
+                response: Response[ClusterDeleteResponse] = await delete_cluster_clusters_delete.asyncio_detailed(
+                    client=client
+                )
 
             if response.status_code in (200, 204):
                 self.logger.info(f"Spark cluster deleted successfully for {username}")

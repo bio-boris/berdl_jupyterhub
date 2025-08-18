@@ -30,7 +30,7 @@ exclude = [
 ]
 
 # Same as Black.
-line-length = 140
+line-length = 120
 indent-width = 4
 
 # Assume Python 3.9
