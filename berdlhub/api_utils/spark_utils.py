@@ -47,7 +47,7 @@ class SparkClusterError(Exception):
     pass
 
 
-class AsyncSparkClusterManager:
+class SparkClusterManager:
     """
     A unified async class to manage Spark clusters for users.
 
