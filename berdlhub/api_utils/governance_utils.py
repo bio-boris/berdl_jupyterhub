@@ -6,7 +6,6 @@ from typing import Any
 class GovernanceUtils:
     """
     A utility class to manage MinIO credentials for a JupyterHub spawner.
-    # TODO MOVE AUTH TO A SHARED UTILS MODULE, or in a prior step in the spawner pre-spawn hooks.
     """
 
     # --- Configuration Constants to be read from the Hub's environment ---
@@ -22,33 +21,12 @@ class GovernanceUtils:
     MINIO_CONFIG_ERROR = "MINIO_CONFIG_ERROR"
 
     @staticmethod
-    async def _get_kbase_auth_token(spawner: Any) -> str:
-        """Helper method to retrieve the KBase auth token."""
-        auth_state = await spawner.user.get_auth_state()
-        if not auth_state:
-            spawner.log.error(
-                "KBase auth_state not found for user %s.", spawner.user.name
-            )
-            raise RuntimeError("KBase authentication state is missing.")
-
-        kbase_token = auth_state.get("kbase_token")
-        if not kbase_token:
-            spawner.log.error(
-                "KBase token not found in auth_state for user %s.", spawner.user.name
-            )
-            raise RuntimeError("KBase authentication token is missing from auth_state.")
-
-        return kbase_token
-
-    @staticmethod
-    async def set_governance_credentials(spawner: Any) -> None:
+    async def set_governance_credentials(spawner, kbase_auth_token) -> None:
         """Main method to fetch credentials and mutate and update the spawner's environment."""
         try:
             gov_url = os.environ[GovernanceUtils.GOVERNANCE_API_URL_ENV]
             minio_endpoint_url = os.environ[GovernanceUtils.MINIO_ENDPOINT_URL_ENV]
-
-            token = await GovernanceUtils._get_kbase_auth_token(spawner)
-            headers = {"Authorization": f"Bearer {token}"}
+            headers = {"Authorization": f"Bearer {kbase_auth_token}"}
 
             async with httpx.AsyncClient() as client:
                 response = await client.get(f"{gov_url}/credentials/", headers=headers)

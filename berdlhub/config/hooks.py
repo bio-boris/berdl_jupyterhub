@@ -3,6 +3,21 @@ from berdlhub.api_utils.governance_utils import GovernanceUtils
 from berdlhub.api_utils.spark_utils import SparkClusterManager
 
 
+async def _get_auth_token(spawner) -> str:
+    # TODO WE CAN MOVE THIS TO A SHARED UTILS MODULE
+    """Helper method to retrieve and validate the auth token from the user's auth_state."""
+    auth_state = await spawner.user.get_auth_state()
+    if not auth_state:
+        spawner.log.error("KBase auth_state not found for user.")
+        raise RuntimeError("KBase authentication state is missing.")
+
+    kb_auth_token: str | None = auth_state.get("kbase_token")
+    if not kb_auth_token:
+        spawner.log.error("KBase token not found in auth_state.")
+        raise RuntimeError("KBase authentication token is missing from auth_state.")
+    return kb_auth_token
+
+
 async def pre_spawn_hook(spawner):
     """
     Hook to create a Spark cluster before the user's server starts.
@@ -10,8 +25,9 @@ async def pre_spawn_hook(spawner):
     # TODO TRY CATCH?
     """
     spawner.log.debug("Pre-spawn hook called for user %s", spawner.user.name)
-    await GovernanceUtils.set_governance_credentials(spawner)
-    await SparkClusterManager.start_spark_cluster(spawner)
+    kb_auth_token = await _get_auth_token(spawner)
+    await GovernanceUtils.set_governance_credentials(spawner, kb_auth_token)
+    await SparkClusterManager.start_spark_cluster(spawner, kb_auth_token)
 
 
 async def post_stop_hook(spawner):

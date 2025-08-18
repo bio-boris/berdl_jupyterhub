@@ -1,48 +1,211 @@
-from berdlhub.api_utils import cluster
+"""
+CDM Spark Cluster Manager API Client Wrapper
+"""
+
+import os
+from typing import Optional
+
+from spark_manager_client import AuthenticatedClient, Client
+from spark_manager_client.api.clusters import (
+    create_cluster_clusters_post,
+    delete_cluster_clusters_delete,
+)
+from spark_manager_client.models import (
+    ClusterDeleteResponse,
+    SparkClusterConfig,
+    SparkClusterCreateResponse,
+)
+from spark_manager_client.types import Response
+
+# So this is not part of the client, but it depends on outside code
+from berdlhub.auth.arg_checkers import not_falsy
 
 
 class SparkClusterManager:
     """
-    A utility class with static methods to manage Spark clusters for users.
-    It retrieves the necessary authentication token from the spawner's user auth_state and sets the environment variables required for Spark.
+    A unified class to manage Spark clusters for users.
+    It retrieves the necessary authentication token from the spawner's user auth_state
+    and sets the environment variables required for Spark.
     """
 
-    def __init__(self):
-        pass
+    # Default configuration values
+    DEFAULT_WORKER_COUNT = int(os.environ.get("DEFAULT_WORKER_COUNT", 2))
+    DEFAULT_WORKER_CORES = int(os.environ.get("DEFAULT_WORKER_CORES", 1))
+    DEFAULT_WORKER_MEMORY = os.environ.get("DEFAULT_WORKER_MEMORY", "10GiB")
+    DEFAULT_MASTER_CORES = int(os.environ.get("DEFAULT_MASTER_CORES", 1))
+    DEFAULT_MASTER_MEMORY = os.environ.get("DEFAULT_MASTER_MEMORY", "10GiB")
 
-    @staticmethod
-    async def _get_auth_token(spawner) -> str:
-        # TODO WE CAN MOVE THIS TO A SHARED UTILS MODULE
-        """Helper method to retrieve and validate the auth token from the user's auth_state."""
-        auth_state = await spawner.user.get_auth_state()
-        if not auth_state:
-            spawner.log.error("KBase auth_state not found for user.")
-            raise RuntimeError("KBase authentication state is missing.")
-
-        kb_auth_token: str | None = auth_state.get("kbase_token")
-        if not kb_auth_token:
-            spawner.log.error("KBase token not found in auth_state.")
-            raise RuntimeError("KBase authentication token is missing from auth_state.")
-        return kb_auth_token
-
-    @staticmethod
-    async def start_spark_cluster(spawner):
+    def __init__(self, kbase_auth_token: Optional[str] = None):
         """
-        Create a Spark cluster for the user.
+        Initialize the SparkClusterManager with optional authentication token.
+
+        Args:
+            kbase_auth_token: Optional KBase authentication token
+        """
+        self.kbase_auth_token = kbase_auth_token
+        self.api_url = not_falsy(
+            os.environ.get("SPARK_CLUSTER_MANAGER_API_URL"),
+            "SPARK_CLUSTER_MANAGER_API_URL",
+        )
+
+    def _get_client(self) -> Client:
+        """
+        Get an unauthenticated client for the Spark Cluster Manager API.
+
+        Returns:
+            Client: Unauthenticated API client
+        """
+        return Client(base_url=str(self.api_url))
+
+    def _get_authenticated_client(
+        self, kbase_auth_token: Optional[str] = None
+    ) -> AuthenticatedClient:
+        """
+        Get an authenticated client for the Spark Cluster Manager API.
+
+        Args:
+            kbase_auth_token: Optional token to override instance token
+
+        Returns:
+            AuthenticatedClient: Authenticated API client
+        """
+        token = kbase_auth_token or self.kbase_auth_token
+        if not token:
+            raise ValueError("Authentication token is required")
+
+        return AuthenticatedClient(base_url=str(self.api_url), token=str(token))
+
+    def _raise_api_error(self, response: Response) -> None:
+        """
+        Process the API error response and raise an error.
+
+        Args:
+            response: API response object
+
+        Raises:
+            ValueError: With API error details
+        """
+        error_message = f"API Error (HTTP {response.status_code})"
+
+        if hasattr(response, "content") and response.content:
+            error_message += f": {response.content}"
+
+        raise ValueError(error_message)
+
+    def create_cluster(
+        self,
+        kbase_auth_token: Optional[str] = None,
+        worker_count: Optional[int] = None,
+        worker_cores: Optional[int] = None,
+        worker_memory: Optional[str] = None,
+        master_cores: Optional[int] = None,
+        master_memory: Optional[str] = None,
+    ) -> Optional[SparkClusterCreateResponse]:
+        """
+        Create a new Spark cluster with the given configuration.
+
+        Args:
+            kbase_auth_token: Optional token to override instance token
+            worker_count: Number of worker nodes (defaults to DEFAULT_WORKER_COUNT)
+            worker_cores: CPU cores per worker (defaults to DEFAULT_WORKER_CORES)
+            worker_memory: Memory per worker (defaults to DEFAULT_WORKER_MEMORY)
+            master_cores: CPU cores for master (defaults to DEFAULT_MASTER_CORES)
+            master_memory: Memory for master (defaults to DEFAULT_MASTER_MEMORY)
+
+        Returns:
+            SparkClusterCreateResponse: Cluster creation response or None
+
+        Raises:
+            ValueError: If API call fails
+        """
+        # Use provided values or fall back to defaults
+        worker_count = (
+            worker_count if worker_count is not None else self.DEFAULT_WORKER_COUNT
+        )
+        worker_cores = (
+            worker_cores if worker_cores is not None else self.DEFAULT_WORKER_CORES
+        )
+        worker_memory = worker_memory or self.DEFAULT_WORKER_MEMORY
+        master_cores = (
+            master_cores if master_cores is not None else self.DEFAULT_MASTER_CORES
+        )
+        master_memory = master_memory or self.DEFAULT_MASTER_MEMORY
+
+        client = self._get_authenticated_client(kbase_auth_token)
+
+        with client as client:
+            # Create the config object
+            config = SparkClusterConfig(
+                worker_count=worker_count,
+                worker_cores=worker_cores,
+                worker_memory=worker_memory,
+                master_cores=master_cores,
+                master_memory=master_memory,
+            )
+
+            response: Response[SparkClusterCreateResponse] = (
+                create_cluster_clusters_post.sync_detailed(client=client, body=config)
+            )
+
+        if response.status_code == 201 and response.parsed:
+            print(f"Spark cluster created successfully.")
+            print(f"Master URL: {response.parsed.master_url}")
+            return response.parsed
+
+        self._raise_api_error(response)
+
+    def delete_cluster(
+        self, kbase_auth_token: Optional[str] = None
+    ) -> Optional[ClusterDeleteResponse]:
+        """
+        Delete the Spark cluster for the user.
+
+        Args:
+            kbase_auth_token: Optional token to override instance token
+
+        Returns:
+            ClusterDeleteResponse: Deletion response or None
+
+        Raises:
+            ValueError: If API call fails
+        """
+        client = self._get_authenticated_client(kbase_auth_token)
+
+        with client as client:
+            response: Response[ClusterDeleteResponse] = (
+                delete_cluster_clusters_delete.sync_detailed(client=client)
+            )
+
+        if response.status_code in (200, 204) and response.parsed:
+            print("Spark cluster deleted successfully.")
+            return response.parsed
+
+        self._raise_api_error(response)
+
+    async def start_spark_cluster(
+        self, spawner, kbase_auth_token: Optional[str] = None
+    ):
+        """
+        Create a Spark cluster for the user (async method for spawner integration).
+
+        Args:
+            spawner: JupyterHub spawner instance
+            kbase_auth_token: Optional token to override instance token
+
+        Raises:
+            ValueError: If cluster creation fails or master URL not found
         """
         username = spawner.user.name
-        kb_auth_token = await SparkClusterManager._get_auth_token(spawner)
+        token = kbase_auth_token or self.kbase_auth_token
+
         try:
             spawner.log.info(f"Creating Spark cluster for user {username}")
-            response = cluster.create_cluster(
-                kbase_auth_token=kb_auth_token,
-            )
+            response = self.create_cluster(kbase_auth_token=token)
 
             master_url = getattr(response, "master_url", None)
             if master_url:
                 spawner.log.info(f"Spark cluster created with master URL: {master_url}")
                 spawner.environment["SPARK_MASTER_URL"] = master_url
-
             else:
                 raise ValueError(f"Master URL not found in response: {response}")
 
@@ -52,16 +215,20 @@ class SparkClusterManager:
             )
             raise
 
-    @staticmethod
-    async def stop_spark_cluster(spawner):
+    async def stop_spark_cluster(self, spawner, kbase_auth_token: Optional[str] = None):
         """
-        Delete the Spark cluster for the user.
+        Delete the Spark cluster for the user (async method for spawner integration).
+
+        Args:
+            spawner: JupyterHub spawner instance
+            kbase_auth_token: Optional token to override instance token
         """
         username = spawner.user.name
+        token = kbase_auth_token or self.kbase_auth_token
+
         try:
-            kb_auth_token = await SparkClusterManager._get_auth_token(spawner)
             spawner.log.info(f"Deleting Spark cluster for user {username}")
-            cluster.delete_cluster(kbase_auth_token=kb_auth_token)
+            self.delete_cluster(kbase_auth_token=token)
             spawner.log.info(f"Spark cluster deleted for user {username}")
         except Exception as e:
             spawner.log.error(
