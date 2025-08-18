@@ -4,7 +4,6 @@ A client for the KBase Auth2 server.
 
 # Mostly copied from https://github.com/kbase/collections
 
-
 import logging
 from enum import IntEnum
 from typing import NamedTuple, List
@@ -12,8 +11,8 @@ from typing import NamedTuple, List
 import aiohttp
 from tornado import web
 
-from berdl.auth.arg_checkers import not_falsy as _not_falsy
-from berdl.auth.kb_user import UserID
+from berdlhub.auth.arg_checkers import not_falsy as _not_falsy
+from berdlhub.auth.kb_user import UserID
 
 
 class AdminPermission(IntEnum):
@@ -44,9 +43,7 @@ async def _check_error(r):
         try:
             j = await r.json()
         except Exception:
-            err = "Non-JSON response from KBase auth server, status code: " + str(
-                r.status
-            )
+            err = "Non-JSON response from KBase auth server, status code: " + str(r.status)
             logging.getLogger(__name__).info("%s, response:\n%s", err, r.text)
             raise IOError(err)
         # assume that if we get json then at least this is the auth server and we can
@@ -90,9 +87,7 @@ class AuthenticationError(web.HTTPError):
     """An error thrown from the authentication service."""
 
     def __init__(self, status_code=400, log_message=None, *args, **kwargs):
-        super().__init__(
-            status_code, log_message or "Authentication error", *args, **kwargs
-        )
+        super().__init__(status_code, log_message or "Authentication error", *args, **kwargs)
 
 
 class InvalidTokenError(AuthenticationError):
@@ -103,7 +98,7 @@ class InvalidTokenError(AuthenticationError):
             status_code=401,
             log_message=log_message or "Invalid session token format",
             *args,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -115,5 +110,5 @@ class MissingTokenError(AuthenticationError):
             status_code=401,
             log_message=log_message or "Missing session token",
             *args,
-            **kwargs
+            **kwargs,
         )

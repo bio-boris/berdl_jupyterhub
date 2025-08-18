@@ -1,0 +1,67 @@
+# network-policy.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: notebook-isolation
+  namespace: jupyterhub
+spec:
+  # Apply to all notebook pods
+  podSelector:
+    matchLabels:
+      component: singleuser-notebook
+
+  policyTypes:
+  - Ingress
+  - Egress
+
+  ingress:
+  # Only allow traffic from the hub
+  - from:
+    - podSelector:
+        matchLabels:
+          app: jupyterhub
+          component: hub
+    ports:
+    - protocol: TCP
+      port: 8888
+
+  egress:
+  # Allow DNS
+  - to:
+    - namespaceSelector: {}
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+
+  # Allow talking to the hub
+  - to:
+    - podSelector:
+        matchLabels:
+          app: jupyterhub
+          component: hub
+    ports:
+    - protocol: TCP
+      port: 8081
+
+  # Allow external internet (for pip, conda, etc)
+  - to:
+    - podSelector: {}
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80
+
+  # Allow your internal services
+  - to:
+    - podSelector:
+        matchLabels:
+          app: spark-cluster
+  - to:
+    - podSelector:
+        matchLabels:
+          app: hive-metastore

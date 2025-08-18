@@ -1,29 +1,42 @@
-from berdl.config.spark_utils import SparkClusterManager
-from berdl.config.governance_utils import GovernanceUtils
 from kubernetes import client
+from berdlhub.api_utils.governance_utils import GovernanceUtils
+from berdlhub.api_utils.spark_utils import SparkClusterManager
+
+
+async def _get_auth_token(spawner) -> str:
+    """Helper method to retrieve and validate the auth token from the user's auth_state."""
+    auth_state = await spawner.user.get_auth_state()
+    if not auth_state:
+        spawner.log.error("KBase auth_state not found for user.")
+        raise RuntimeError("KBase authentication state is missing.")
+
+    kb_auth_token: str | None = auth_state.get("kbase_token")
+    if not kb_auth_token:
+        spawner.log.error("KBase token not found in auth_state.")
+        raise RuntimeError("KBase authentication token is missing from auth_state.")
+    return kb_auth_token
 
 
 async def pre_spawn_hook(spawner):
     """
     Hook to create a Spark cluster before the user's server starts.
-    # TODO MOVE AUTH TO A SHARED UTILS MODULE, or in a prior step in the spawner pre-spawn hooks.
-    # TODO TRY CATCH?
     """
-    spawner.log.info("Pre-spawn hook called for user %s", spawner.user.name)
-    await GovernanceUtils.set_governance_credentials(spawner)
-    await SparkClusterManager.start_spark_cluster(spawner)
+    spawner.log.debug("Pre-spawn hook called for user %s", spawner.user.name)
+    kb_auth_token = await _get_auth_token(spawner)
+    await GovernanceUtils(kb_auth_token).set_governance_credentials(spawner)
+    await SparkClusterManager(kb_auth_token).start_spark_cluster(spawner)
 
 
 async def post_stop_hook(spawner):
     """
     Hook to delete the Spark cluster after the user's server stops.
     """
-    spawner.log.info("Post-stop hook called for user %s", spawner.user.name)
-    await SparkClusterManager.stop_spark_cluster(spawner)
+    kb_auth_token = await _get_auth_token(spawner)
+    spawner.log.debug("Post-stop hook called for user %s", spawner.user.name)
+    await SparkClusterManager(kb_auth_token).stop_spark_cluster(spawner)
 
 
 def modify_pod_hook(spawner, pod):
-
     pod.spec.containers[0].env.append(
         client.V1EnvVar(
             "BERDL_POD_IP",
@@ -84,4 +97,24 @@ def modify_pod_hook(spawner, pod):
             ),
         )
     )
+
     return pod
+
+
+def configure_hooks(c):
+    c.KubeSpawner.pre_spawn_hook = pre_spawn_hook
+    c.KubeSpawner.post_stop_hook = post_stop_hook
+    c.KubeSpawner.modify_pod_hook = modify_pod_hook
+
+    # Use the NB_USER environment variable that's already set
+    c.KubeSpawner.lifecycle_hooks = {
+        "postStart": {
+            "exec": {
+                "command": [
+                    "/bin/sh",
+                    "-c",
+                    "ln -sfn /global_share /home/$NB_USER/global_share || true",
+                ]
+            }
+        }
+    }

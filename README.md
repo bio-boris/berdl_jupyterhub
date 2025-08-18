@@ -20,37 +20,52 @@ It uses `KubeSpawner` to launch user notebook servers as individual Kubernetes p
 
 The container is configured at runtime using the following environment variables.
 
+### Required Variables
+
+| Variable                                | Description                                                                      |
+|-----------------------------------------|----------------------------------------------------------------------------------|
+| `JUPYTERHUB_COOKIE_SECRET_64_HEX_CHARS` | A 64-character hex string for securing user session cookies.                     |
+| `JUPYTERHUB_TEMPLATES_DIR`              | The path to custom HTML templates for login.                                     |
+| `KBASE_ORIGIN`                          | The KBase service URL used by the auth login html.                               |
+| `KBASE_AUTH_URL`                        | The URL for the KBase authentication service.                                    |
+| `CDM_TASK_SERVICE_URL`                  | The URL for the CTS service.                                                     |
+| `GOVERNANCE_API_URL`                    | The URL for the Governance API.                                                  |
+| `MINIO_ENDPOINT_URL`                    | The endpoint URL for the MinIO object storage service.                           |
+| `SPARK_CLUSTER_MANAGER_API_URL`         | The URL for the Spark Cluster Manager API.                                       |
+| `BERDL_HIVE_METASTORE_URI`              | The URI for the Hive Metastore service.                                          |
+
+### Optional Variables
+
 | Variable                                | Default Value                           | Description                                                                      |
 |-----------------------------------------|-----------------------------------------|----------------------------------------------------------------------------------|
 | `AUTH_FULL_ADMIN_ROLES`                 | _(empty string)_                        | A comma-separated list of KBase roles to be granted full admin rights.           |
-| `JUPYTERHUB_COOKIE_SECRET_64_HEX_CHARS` | _(none)_                                | A 64-character hex string for securing user session cookies.                     |
 | `JUPYTERHUB_CRYPT_KEY`                  | _(none)_                                | A 32-byte key for the authenticator to encrypt auth state.                       |
 | `JUPYTERHUB_IDLE_TIMEOUT_SECONDS`       | `3600`                                  | Seconds of inactivity before a user's server is automatically shut down.         |
-| `JUPYTERHUB_TEMPLATES_DIR`              | `/hub/berdl/auth/templates`             | The path to custom HTML templates for login.                                     |
-| `KBASE_AUTH_URL`                        | `https://ci.kbase.us/services/auth`     | The URL for the KBase authentication service.                                    |
-| `KBASE_ORIGIN`                          | `https://ci.kbase.us`                   | The KBase service URL used by the auth login html.                               |
 | `NODE_SELECTOR_HOSTNAME`                | _(none)_                                | If set, forces user notebook pods to be scheduled on a specific Kubernetes node. |
 | `BERDL_NOTEBOOK_IMAGE_TAG`              | `ghcr.io/bio-boris/berdl_notebook:pr-1` | The tag of the BERDL notebook image to use for user servers.                     |
-| `SPARK_CLUSTER_MANAGER_API_URL`         | _(none)_                                | The URL for the Spark Cluster Manager API.                                       |
-| `GOVERNANCE_API_URL`                    | _(none)_                                | The URL for the Governance API.                                                  |
-| `MINIO_ENDPOINT`                        | _(none)_                                | The endpoint for the MinIO object storage service.                               |
-| `MINIO_SECURE_FLAG`                     | _(none)_`                               | Whether to use HTTPS for MinIO connections.                                      |
-| `CDM_TASK_SERVICE_URL`                  | _(none)_                                | The URL for the CTS service.                                                     |
-| `BERDL_HIVE_METASTORE_URL`              | _(none)_                                | The URL for the Hive Metastore service.                                          |
+| `MINIO_SECURE_FLAG`                     | `True`                                  | Whether to use HTTPS for MinIO connections.                                      |
+| `JUPYTERHUB_DEBUG`                      | `False`                                 | Enable debug mode for JupyterHub.                                                |
+| `JUPYTERHUB_LOG_LEVEL`                  | `INFO`                                  | Set JupyterHub log level (DEBUG, INFO, WARN, ERROR).                             |
+| `ENABLE_IDLE_CULLER`                    | `True`                                  | Enable idle culler for JupyterHub.                                               |
+| `JUPYTERHUB_MEM_LIMIT_GB`               | `4`                                     | Memory limit in GB for JupyterHub user containers.                               |
+| `JUPYTERHUB_MEM_GUARANTEE_GB`           | `2`                                     | Memory guarantee in GB for JupyterHub user containers.                           |
+| `JUPYTERHUB_CPU_LIMIT`                  | `2`                                     | CPU limit (cores) for JupyterHub user containers.                                |
+| `DEFAULT_MASTER_CORES`                  | `1`                                     | Default master cores for Spark clusters.                                         |
+| `DEFAULT_MASTER_MEMORY`                 | `2g`                                    | Default master memory for Spark clusters.                                        |
+| `DEFAULT_WORKER_COUNT`                  | `2`                                     | Default number of worker nodes for Spark clusters.                               |
+| `DEFAULT_WORKER_CORES`                  | `1`                                     | Default worker cores for Spark clusters.                                         |
+| `DEFAULT_WORKER_MEMORY`                 | `2g`                                    | Default worker memory for Spark clusters.                                        |
+
 ---
 
-
-**Note**: Variables with a default value of `_(none)_` **must be set at runtime**. All other variables are optional and will use their default if not provided.
-
+**Note**: All required variables **must be set at runtime**. Optional variables will use their default values if not provided.
 
 # User Guide
-# TODO Move to the notebook image repo
--- Users must install with pip install --user to preserve
-
 
 # Future Work and Known Issues
 
 ---
+* Move userguide to readthedocs
 * Consider backing up the sqlite database
 * Considerate Separate configurable-http-proxy Proxy
 * Test Environment setup
