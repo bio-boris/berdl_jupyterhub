@@ -1,6 +1,6 @@
 import os
+
 import httpx
-from typing import Any
 
 
 class GovernanceUtils:

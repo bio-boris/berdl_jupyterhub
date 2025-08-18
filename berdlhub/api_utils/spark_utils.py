@@ -192,8 +192,6 @@ class AsyncSparkClusterManager:
 
         username = spawner.user.name
 
-
-
         try:
             self.logger.info(f"Deleting Spark cluster for user {username}")
 
